@@ -8,7 +8,7 @@ params = {
     'y': ''
 }
 
-def _read_card(file_name):
+def read_card(file_name):
     with open(file_name, 'r') as card:
         for line in card:
             for parameter in params:
@@ -18,4 +18,4 @@ def _read_card(file_name):
     return tuple(OrderedDict(params).values())
 
 if __name__ == '__main__':
-    print(_read_card('template_card.txt'))
+    print(read_card('template_card.txt'))
