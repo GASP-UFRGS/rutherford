@@ -3,9 +3,7 @@ from collections import OrderedDict
 params = {
     'T_c': '',
     'Z_t': '',
-    'z_p': '',
-    'a': '',
-    'y': ''
+    'z_p': ''
 }
 
 def read_card(file_name):
