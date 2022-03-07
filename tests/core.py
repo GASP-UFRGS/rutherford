@@ -52,18 +52,18 @@ theta_out = scattering_angle(b_in, r0) # Scattering angle calculated.
 
 plt.figure(figsize=(8,6), facecolor='w')
 plt.plot(theta_in,b_out)
-plt.ylabel(r'b [$fm$]',fontsize=14)
-plt.xlabel(r'$\theta [graus]$',fontsize=14)
-plt.title(r'Distribuição de $b$ em função de $\theta$',fontsize=16)
+plt.ylabel(r'$b$ [fm]',fontsize=14)
+plt.xlabel(r'$\theta$ [degrees]',fontsize=14)
+plt.title(r'Impact parameter as function of scattering angle',fontsize=16)
 
-plt.savefig('grafico_b_vs_theta.png', dpi=300, bbox_inches='tight')
+plt.savefig('plot_b_vs_theta.png', dpi=300, bbox_inches='tight')
 
 # theta vs b
 
 plt.figure(figsize=(8,6), facecolor='w')
 plt.plot(b_in, theta_out)
-plt.ylabel(r'$\theta [graus]$',fontsize=14)
-plt.xlabel(r'b [$fm$]',fontsize=14)
-plt.title(r'Distribuição de $\theta$ em função de $b$',fontsize=16)
+plt.ylabel(r'$\theta$ [degrees]',fontsize=14)
+plt.xlabel(r'$b$ [fm]',fontsize=14)
+plt.title(r'Scattering angle as function of impact parameter',fontsize=16)
 
-plt.savefig('grafico_theta_vs_b.png', dpi=300, bbox_inches='tight')
+plt.savefig('plot_theta_vs_b.png', dpi=300, bbox_inches='tight')
