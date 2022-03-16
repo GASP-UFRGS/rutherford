@@ -32,3 +32,4 @@ def read_card(file_name):
 
 if __name__ == '__main__':
     print(read_card('template_card.txt'))
+

@@ -71,3 +71,4 @@ plt.xlabel(r'$b$ [fm]',fontsize=14)
 plt.title(r'Scattering angle as function of impact parameter',fontsize=16)
 
 plt.savefig('plot_theta_vs_b.png', dpi=300, bbox_inches='tight')
+
