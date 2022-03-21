@@ -1,12 +1,16 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
+from card_reader import read_card
 from scipy.constants import epsilon_0, pi, e
 
 # Constants
 
-T = 7.7e6*e # Energy of the alpha particles in J.
+T, Z, z = read_card(sys.argv[1])
+
+T = T*e # Energy of the particles in J.
 k = 1/(4*pi*epsilon_0)
-r0 = (k*2*79*e**2/T)*1e15 # Minimum distance between incident particles and target in fm.
+r0 = (k*z*Z*e**2/T)*1e15 # Minimum distance between incident particles and target in fm.
 
 # Functions
 
@@ -67,3 +71,4 @@ plt.xlabel(r'$b$ [fm]',fontsize=14)
 plt.title(r'Scattering angle as function of impact parameter',fontsize=16)
 
 plt.savefig('plot_theta_vs_b.png', dpi=300, bbox_inches='tight')
+
