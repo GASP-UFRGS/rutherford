@@ -87,7 +87,7 @@ plt.title(r'Scattering angle as function of impact parameter',fontsize=16)
 
 plt.savefig('plot_theta_vs_b.png', dpi=300, bbox_inches='tight')
 
-# dsigdtheta x theta
+# dsigdtheta vs theta
 
 plt.figure(figsize=(8,6), facecolor='w')
 plt.plot(dsig_dtheta,theta_in)
