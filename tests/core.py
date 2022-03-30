@@ -96,3 +96,4 @@ plt.xlabel(r'$d\sigma/d\theta$',fontsize=14)
 plt.title(r'Distribution of $\theta$ in function $d\sigma/d\theta$',fontsize=16)
 
 plt.savefig('plot_dsig_dtheta_vs_theta.png', dpi=300, bbox_inches='tight')
+
