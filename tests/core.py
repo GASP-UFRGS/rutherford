@@ -43,12 +43,17 @@ def scattering_angle(b, r0, angle_unit='degrees'):
     return
 
 def scattering_differential(theta, r0):
+    """
+    Returns differential scattering impact when given the scattering angle.
+
+    """
     
     dsig = np.pi*r0**2*np.cos(theta/2)
     
     dsigdtheta = dsig/(4*np.sin(theta/2)**3)
     
     return dsigdtheta
+
 # Calculations
 
 theta_in = np.linspace(0,180,100)[1:] # Scattering angle input.
@@ -81,6 +86,8 @@ plt.xlabel(r'$b$ [fm]',fontsize=14)
 plt.title(r'Scattering angle as function of impact parameter',fontsize=16)
 
 plt.savefig('plot_theta_vs_b.png', dpi=300, bbox_inches='tight')
+
+# dsigdtheta x theta
 
 plt.figure(figsize=(8,6), facecolor='w')
 plt.plot(dsig_dtheta,theta_in)
