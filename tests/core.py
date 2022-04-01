@@ -41,22 +41,21 @@ def scattering_angle(b, r0, angle_unit='degrees'):
         return np.degrees(2*np.arctan(r0/(2*b)))
 
     return
-
-def scattering_differential(theta, r0, angle_unit = 'degrees'):
+def scattering_differential(theta, r0, angle_unit ='degrees'):
     """
     Returns differential scattering impact when given the scattering angle.
     """
-    
     if angle_unit == 'radians':
         dsig = np.pi*r0**2*np.cos(theta/2)
         dsigdtheta = dsig/(4*np.sin(theta/2)**3)
         return dsigdtheta
     
-    elif angle_unit == 'degrees':
-        dsig = np.degrees(np.pi*r0**2*np.cos(theta/2))
-        dtheta = np.degrees((4*np.sin(theta/2)**3))
-        dsigdtheta = dsig/dtheta
+    if angle_unit == 'degrees':
+        theta = np.radians(theta)
+        dsig = np.pi*r0**2*np.cos(theta/2)
+        dsigdtheta = dsig/(4*np.sin(theta/2)**3)
         return dsigdtheta
+    return
 
 # Calculations
 
