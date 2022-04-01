@@ -42,17 +42,21 @@ def scattering_angle(b, r0, angle_unit='degrees'):
 
     return
 
-def scattering_differential(theta, r0):
+def scattering_differential(theta, r0, angle_unit = 'degrees'):
     """
     Returns differential scattering impact when given the scattering angle.
-
     """
     
-    dsig = np.pi*r0**2*np.cos(theta/2)
+    if angle_unit == 'radians':
+        dsig = np.pi*r0**2*np.cos(theta/2)
+        dsigdtheta = dsig/(4*np.sin(theta/2)**3)
+        return dsigdtheta
     
-    dsigdtheta = dsig/(4*np.sin(theta/2)**3)
-    
-    return dsigdtheta
+    elif angle_unit == 'degrees':
+        dsig = np.degrees(np.pi*r0**2*np.cos(theta/2))
+        dtheta = np.degrees((4*np.sin(theta/2)**3))
+        dsigdtheta = dsig/dtheta
+        return dsigdtheta
 
 # Calculations
 
@@ -62,8 +66,8 @@ b_out = impact_parameter(theta_in, r0) # Impact parameter calculated.
 b_in = np.linspace(0,30*r0,10000)[1:] # Impact parameter input.
 theta_out = scattering_angle(b_in, r0) # Scattering angle calculated.
 
-theta = np.linspace(-90, 90,100)[1:]
-dsig_dtheta = scattering_differential(theta, r0) #Differential scattering impact
+theta = np.linspace(-90, 90,100)[1:] #Scattering angle input.
+dsig_dtheta = scattering_differential(theta, r0) #Differential scattering cross section
 
 # Plots
 
