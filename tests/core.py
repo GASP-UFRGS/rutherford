@@ -65,8 +65,7 @@ b_out = impact_parameter(theta_in, r0) # Impact parameter calculated.
 b_in = np.linspace(0,30*r0,10000)[1:] # Impact parameter input.
 theta_out = scattering_angle(b_in, r0) # Scattering angle calculated.
 
-theta = np.linspace(-90, 90,100)[1:] #Scattering angle input.
-dsig_dtheta = scattering_differential(theta, r0) #Differential scattering cross section
+dsig_dtheta = scattering_differential(theta_in, r0) #Differential scattering cross section
 
 # Plots
 
@@ -99,4 +98,5 @@ plt.xlabel(r'$\theta [degrees]$',fontsize=14)
 plt.ylabel(r'$d\sigma/d\theta$',fontsize=14)
 plt.title(r'Distribution of $d\sigma/d\theta$ in function $\theta$',fontsize=16)
 
-plt.savefig('plot_theta_vs_dsig_dtheta.png', dpi=300, bbox_inches='tight')
+plt.savefig('plot_dsig_dtheta_vs_thetapng', dpi=300, bbox_inches='tight')
+
