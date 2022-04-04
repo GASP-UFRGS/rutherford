@@ -90,13 +90,13 @@ plt.title(r'Scattering angle as function of impact parameter',fontsize=16)
 
 plt.savefig('plot_theta_vs_b.png', dpi=300, bbox_inches='tight')
 
-# dsigdtheta vs theta
+# theta vs dsig_dtheta
 
 plt.figure(figsize=(8,6), facecolor='w')
-plt.plot(dsig_dtheta,theta_in)
-plt.ylabel(r'$\theta [degrees]$',fontsize=14)
-plt.xlabel(r'$d\sigma/d\theta$',fontsize=14)
-plt.title(r'Distribution of $\theta$ in function $d\sigma/d\theta$',fontsize=16)
+plt.plot(theta_in, dsig_dtheta)
+plt.yscale("log")
+plt.xlabel(r'$\theta [degrees]$',fontsize=14)
+plt.ylabel(r'$d\sigma/d\theta$',fontsize=14)
+plt.title(r'Distribution of $d\sigma/d\theta$ in function $\theta$',fontsize=16)
 
-plt.savefig('plot_dsig_dtheta_vs_theta.png', dpi=300, bbox_inches='tight')
-
+plt.savefig('plot_theta_vs_dsig_dtheta.png', dpi=300, bbox_inches='tight')
