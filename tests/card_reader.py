@@ -11,10 +11,10 @@ def _raise_missing_card_error():
     sys = platform.system()
     if sys in ('Linux', 'Darwin'):
         raise CardError("Missing input card. Try running like "
-                        "'python3 core.py input.dat'")
+                        "'python3 core.py input.dat'") from None
     else:
         raise CardError("Missing input card. Try running like "
-                        "'python core.py input.dat'")
+                        "'python core.py input.dat'") from None
 
 # Dictionary that contains the necessary parameters
 # of each procedure
