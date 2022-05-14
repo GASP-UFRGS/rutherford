@@ -1,12 +1,17 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
-from card_reader import read_card
+from card_reader import read_card, _raise_missing_card_error()
 from scipy.constants import epsilon_0, pi, e
+
+try:
+    card_name = sys.argv[1]
+except IndexError:
+    _raise_missing_card_error()
 
 # Constants
 
-T, Z, z = read_card(sys.argv[1])
+T, Z, z = read_card(card_name)
 
 T = T*e # Energy of the particles in J.
 k = 1/(4*pi*epsilon_0)

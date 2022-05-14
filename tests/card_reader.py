@@ -1,6 +1,20 @@
-class CardParametersError(Exception):
-    '''Exception raised for errors in the parameters of the input card.'''
+import platform
+
+class CardError(Exception):
+    '''Exception raised for errors related to the input card.'''
     pass
+
+def _raise_parameters_error():
+    raise CardError("Parameters missing or in wrong order")
+
+def _raise_missing_card_error():
+    sys = platform.system()
+    if sys in ('Linux', 'Darwin'):
+        raise CardError("Missing input card. Try running like "
+                        "'python3 core.py input.dat'")
+    else:
+        raise CardError("Missing input card. Try running like "
+                        "'python core.py input.dat'")
 
 # Dictionary that contains the necessary parameters
 # of each procedure
@@ -26,7 +40,7 @@ def read_card(file_name):
                     params[parameter] = float(line.split()[0])
 
     if tuple(params) != procs[procedure]:
-        raise(CardParametersError)
+        _raise_parameters_error()
 
     return tuple(params.values())
 
