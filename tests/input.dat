@@ -1,0 +1,9 @@
+thvsb    : [proc] Procedure to be done
+
+parameters:
+7.7e6    : [T_c] Collision energy (eV)
+79       : [Z_t] Proton number of the target
+2        : [z_p] Proton number of the projectiles
+degrees  : [ang_unit] Angle unit (radians or degrees)
+0       : [ang_start] Start of angle interval (chosen unit)
+180      : [ang_end] End of angle interval (chosen unit)
