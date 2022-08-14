@@ -1,6 +1,0 @@
-thvsb : [proc] Procedure to be done
-
-parameters:
-7.7e6 : [KinEn] Collision energy (eV)
-79    : [Ztarget] Proton number of the target
-2     : [Zproj] Proton number of the projectiles
