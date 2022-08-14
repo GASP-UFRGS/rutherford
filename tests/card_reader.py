@@ -5,7 +5,7 @@ class CardParametersError(Exception):
 # Dictionary that contains the necessary parameters
 # of each procedure
 procs = {
-    'thvsb': ('T_c', 'Z_t', 'z_p')
+    'thvsb': ('KinEn', 'Ztarget', 'Zproj')
 }
 
 # Empty dictionary that will receive the parameters

@@ -6,11 +6,11 @@ from scipy.constants import epsilon_0, pi, e
 
 # Constants
 
-T, Z, z = read_card(sys.argv[1])
+KinEn,Ztarget,Zproj = read_card(sys.argv[1])
 
-T = T*e # Energy of the particles in J.
-k = 1/(4*pi*epsilon_0)
-r0 = (k*z*Z*e**2/T)*1e15 # Minimum distance between incident particles and target in fm.
+KinEn = KinEn*e # Energy of the particles in J.
+kconst = 1/(4*pi*epsilon_0)
+r0 = (kconst*Zproj*Ztarget*e**2/KinEn)*1e15 # Minimum distance between incident particles and target in fm.
 
 # Functions
 
@@ -20,27 +20,22 @@ def impact_parameter(theta, r0, angle_unit='degrees'):
     """
 
     if angle_unit == 'radians':
-        b = r0/(2*np.tan(theta/2))
-        return b
-
+        bparam = r0/(2*np.tan(theta/2))
     elif angle_unit == 'degrees':
-        b = r0/(2*np.tan(np.radians(theta)/2))
-        return b
+        bparam = r0/(2*np.tan(np.radians(theta)/2))
+    return bparam
 
-    return
-
-def scattering_angle(b, r0, angle_unit='degrees'):
+def scattering_angle(bparam, r0, angle_unit='degrees'):
     """
     Returns scattering angle when given the impact parameter.
     """
 
     if angle_unit == 'radians':
-        return 2*np.arctan(r0/(2*b))
+        return 2*np.arctan(r0/(2*bparam))
     
     elif angle_unit == 'degrees':
-        return np.degrees(2*np.arctan(r0/(2*b)))
+        return np.degrees(2*np.arctan(r0/(2*bparam)))
 
-    return
 def scattering_differential(theta, r0, angle_unit ='degrees'):
     """
     Returns differential scattering impact when given the scattering angle.
@@ -55,7 +50,6 @@ def scattering_differential(theta, r0, angle_unit ='degrees'):
         dsig = np.pi*r0**2*np.cos(theta/2)
         dsigdtheta = dsig/(4*np.sin(theta/2)**3)
         return dsigdtheta
-    return
 
 # Calculations
 
