@@ -19,7 +19,7 @@ def _raise_missing_card_error():
 # Dictionary that contains the necessary parameters
 # of each procedure
 procs = {
-    'thvsb': ('T_c', 'Z_t', 'z_p', 'ang_unit', 'ang_start', 'ang_end')
+    'thvsb': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'angStart', 'angEnd')
 }
 
 # Empty dictionary that will receive the parameters
