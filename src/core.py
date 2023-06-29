@@ -1,7 +1,7 @@
 import numpy as np
 import sys
 from card_reader import read_card, _raise_missing_card_error
-from scipy.constants import epsilon_0, pi, e
+from scipy.constants import epsilon_0, pi, e, alpha
 
 try:
     card_name = sys.argv[1]
