@@ -52,19 +52,32 @@ def scattering_differential(theta, r0, angle_unit):
         dsigdtheta = dsig/(4*np.sin(theta/2)**3)
     return dsigdtheta
 
+def scattering_differential_Mott(theta, angle_unit):
+    """
+    Returns differential scattering impact when given the scattering angle.
+    """
+    if angle_unit == 'radians':
+        dsig = e**4*np.cos(theta/2)**3
+        dsigdtheta = dsig/(16*kinEn**2*np.pi*np.sin(theta/2)**3)
+    elif angle_unit == 'degrees': #CGS
+        theta = np.radians(theta)
+        dsig = np.pi*alpha**2*np.cos(theta/2)**3
+        dsigdtheta = dsig/((kinEn*10e7)**2*np.sin(theta/2)**3)
+    return dsigdtheta
+
 # Calculations
 
-theta_in = np.linspace(angStart,angEnd,100)[1:] # Scattering angle input.
+theta_in = np.linspace(angStart,angEnd,1000)[1:] # Scattering angle input.
 b_out = impact_parameter(theta_in,r0,angUnit) # Impact parameter calculated.
 
 dsig_dtheta = scattering_differential(theta_in,r0,angUnit) #Differential scattering cross section
-
+dsig_dtheta_Mott = scattering_differential_Mott(theta_in,angUnit) #Differential scattering cross section
 
 # Write to file
 
 file_path = "output.dat"
 
-data = np.column_stack((theta_in, b_out, dsig_dtheta))
+data = np.column_stack((theta_in, b_out, dsig_dtheta, dsig_dtheta_Mott))
 np.savetxt(file_path, data, delimiter=",")
 
 # Write angle unit
@@ -72,5 +85,3 @@ with open(file_path, "a") as file:
      file.write("# " + angUnit + "\n")
 
 print("Data has been written to", file_path)
-
-
