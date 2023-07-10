@@ -5,5 +5,6 @@ Input parameters:
 79       : [zTarget] Proton number of the target
 2        : [zProj] Proton number of the projectiles
 degrees  : [angUnit] Angle unit (radians or degrees)
-0        : [angStart] Start of angle interval (chosen unit)
-179.5    : [angEnd] End of angle interval (chosen unit)
+10        : [angStart] Start of angle interval (chosen unit)
+179      : [angEnd] End of angle interval (chosen unit)
+y        : [mott] Compute mott correction (y or n)
