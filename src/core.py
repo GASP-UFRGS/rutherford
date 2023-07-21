@@ -1,90 +1,124 @@
 import numpy as np
 import sys
-from card_reader import read_card, _raise_missing_card_error
-from scipy.constants import epsilon_0, pi, e, alpha
+from card_reader import read_card, _raise_missing_card_error 
+from scipy.constants import epsilon_0, pi, e, alpha, hbar, c
 
 try:
     card_name = sys.argv[1]
 except IndexError:
     _raise_missing_card_error()
 
+
 # Constants
 
-kinEn, zTarget, zProj, angUnit, angStart, angEnd, mott = read_card(card_name)
+kinEn, zTarget, zProj, angUnit, angStart, angEnd, mott, mass = read_card(card_name)
 
-kinEn = kinEn*e # Energy of the particles in J.
+kinEn = kinEn*(1.60218e-19) # Energy of the particles in J.
 kconst = 1/(4*pi*epsilon_0)
-D = (kconst*zTarget*e**2/kinEn)*1e15 # Minimum distance between incident particles and target in fm.
-M =  197*1.7*10e27 # Mass of nucleus of Z=79 (for testing purposes)
+D = (kconst*zProj*zTarget*e**2/kinEn)*1e15 # Minimum distance between incident particles and target in fm.
+D2 = (zProj*zTarget*alpha*hbar*c/kinEn)*1e15 # D but with alfa instead of e and kconst. Used to test differences between some equations 
+#D and D2 are equal, as expected. (Actually off by a factor of ~1.7e-10)
+
+
+# Either cos, theta or omega. This exists to test conversion between equations
+var = 'omega'
+
 
 # Functions
 
 def impact_parameter(theta, D, angle_unit):
     """
     Returns impact parameter when given the scattering angle.
-    """
-
+    """ 
     if angle_unit == 'degrees':
         theta = np.radians(theta)
 
     return D/(2*np.tan(theta/2))
 
+
+
 def scattering_angle(bparam, D, angle_unit):
     """
     Returns scattering angle when given the impact parameter.
     """
-
     if angle_unit == 'degrees':
         theta = np.radians(theta)
 
     return 2*np.arctan(D/(2*bparam))
 
-def scattering_differential(theta, D, angle_unit):
+
+
+def scattering_differential_Ruth(theta, D, angle_unit):
     """
     Returns differential scattering impact when given the scattering angle.
     """
     if angle_unit == 'degrees':
         theta = np.radians(theta)
 
-    dsigdtheta = 2*pi*D**2/(1-np.cos(theta))**2#/(4*pi**2*np.sin(theta))
+    if var == 'cos':
+        difCrossSec = (2*pi*D**2/(1-np.cos(theta))**2)#(np.sin(theta)) #Rolf
+    
+    if var == 'theta': # all wrong
+        difCrossSec = pi*D**2*np.cos(theta/2)/(4*np.sin(theta/2)**3)/(2*pi*np.sin(theta)) # Viana. If his dOmega is inconsistent with the others, then so must this be
+        # difCrossSec = 2*pi*np.sin(theta)*D**2/(16*np.sin(theta/2)**4)#/(np.sin(theta))**2 ?? testing
 
-    return dsigdtheta
+    if var == 'omega':        
+        difCrossSec = D2**2/(4*np.sin(theta/2)**4)                                        # CERN
 
-def scattering_differential_Mott(theta, angle_unit):
+    # Only dOmega and dcos are trustworthy.
+    return difCrossSec
+
+
+def scattering_differential_Mott(theta, D, angle_unit):
     """
     Returns differential scattering impact when given the scattering angle.
     """
     if angle_unit == 'degrees':
         theta = np.radians(theta)
 
-    # dsigdtheta = scattering_differential_Ruth(theta, D, angle_unit)
-    dsigdtheta = 2*pi*D**2/(1-np.cos(theta))**2#/(4*pi**2*np.sin(theta))
-    dsigdtheta_Mott = dsigdtheta*((1+np.cos(theta))/(2*(1+(((1-np.cos(theta))*kinEn)/(M*c**2)))))#/(4*pi**2*np.sin(theta))**2
 
-    return dsigdtheta_Mott
+    if var == 'cos':
+        # Rohlf
+        difCrossSec = (2*pi*D**2/(1-np.cos(theta))**2)
+        difCrossSec_Mott = difCrossSec*((1+np.cos(theta))/(2*(1+(((1-np.cos(theta))*kinEn)/(mass*c**2)))))
+
+    if var == 'theta':
+        # Rohlf converted (incorrect
+        difCrossSec = 2*pi*np.sin(theta)*D**2/16*np.sin(theta/2)**4/(2*np.pi*np.sin(theta))
+        difCrossSec_Mott = difCrossSec*((1+np.cos(theta))/(2*(1+(((1-np.cos(theta))*kinEn)/(mass*c**2)))))*(np.sin(theta))
+
+    if var == 'omega':
+        difCrossSec = D2**2/(4*np.sin(theta/2)**4) 
+        difCrossSec_Mott = difCrossSec*np.cos(theta/2)**2   
+
+    return difCrossSec_Mott 
+
 
 # Calculations
 
 theta_in = np.linspace(angStart,angEnd,1000)[1:] # Scattering angle input.
-b_out = impact_parameter(theta_in,, D, angUnit) # Impact parameter calculated.
+b_out = impact_parameter(theta_in, D, angUnit) # Impact parameter calculated.
 
 dsig_dtheta = scattering_differential_Ruth(theta_in, D, angUnit) #Differential scattering cross section
 
 if mott == 'y':
     dsig_dtheta_Mott = scattering_differential_Mott(theta_in, D, angUnit) # Mott correction cross section
 
-theta_in = np.cos(np.radians(theta_in))
+
+if var == 'cos':
+    theta_in = np.cos(np.radians(theta_in))
+
+
+if angUnit == 'radians':
+    theta_in = np.degrees(theta_in)
 
 # Write to file
 
 file_path = "output.dat"
 
 data = np.column_stack((theta_in, b_out, dsig_dtheta, dsig_dtheta_Mott))
-#use np.hstack to add corrections as needed
+
 np.savetxt(file_path, data, delimiter=",")
 
-# Write angle unit
-with open(file_path, "a") as file:
-     file.write("# " + angUnit + "\n")
 
 print("Data has been written to", file_path)
