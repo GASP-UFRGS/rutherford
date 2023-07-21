@@ -1,7 +1,8 @@
+from card_reader import read_card, _raise_missing_card_error 
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plot(output):
+def plot(output,card):
 
 	# Read file
 	data = np.loadtxt(output, delimiter=",")
@@ -45,13 +46,10 @@ def plot(output):
 
 	plt.figure(figsize=(8,6), facecolor='w')
 	plt.plot(theta_in, dsig_dtheta, label='Rutherford')
-	try:
-		plt.plot(theta_in, dsig_dtheta_Mott, label='Mott')
-	except:
-		pass
+	plt.plot(theta_in, dsig_dtheta_Mott, label='Mott')
 	plt.yscale("log")
 	plt.legend()
-		if cos == 1:
+	if cos == 1:
 		plt.xlabel(r'$cos(\theta)$ [{unit}]'.format(unit=angUnit),fontsize=14)
 		plt.ylabel(r'$d\sigma/dcos(\theta)$',fontsize=14)
 		plt.title(r'Distribution of $d\sigma/dcos(\theta)$ as function of the scattering angle',fontsize=16)
@@ -59,9 +57,9 @@ def plot(output):
 	else: 
 		plt.xlabel(r'$\theta$ [{unit}]'.format(unit=angUnit),fontsize=14)
 		plt.ylabel(r'$d\sigma/d\theta$',fontsize=14)
-		plt.title(r'Distribution of $d\sigma/d\theta)$ as function of the scattering angle',fontsize=16)
+		plt.title(r'Distribution of $d\sigma/d\theta$ as function of the scattering angle',fontsize=16)
 		plt.savefig('plot_dsig_dtheta_vs_theta.png', dpi=300, bbox_inches='tight')
 
 
 if __name__ == '__main__':
-    plot('output.dat')
+    plot('output.dat','input.dat')
