@@ -6,15 +6,21 @@ def plot(output):
 	# Read file
 	data = np.loadtxt(output, delimiter=",")
 
-	# Get angle unit
-	with open(output) as file:
-	    lines = file.readlines()
-	    angUnit = lines[-1].lstrip("# ").strip()
-
+	#Read parameter input card 
+	parameters = read_card(card)
+	angUnit = parameters[3]
+	
 	theta_in = data[:, 0]  
 	b_out = data[:, 1]
 	dsig_dtheta = data[:, 2]
-	dsig_dtheta_Mott = data[:, 3]
+	try:
+		dsig_dtheta_Mott = data[:, 3]
+	except:
+		pass
+
+	# Triggers for changing label to dcos(theta)
+	cos = 0
+	
 	# b vs theta
 
 	plt.figure(figsize=(8,6), facecolor='w')
@@ -39,15 +45,22 @@ def plot(output):
 
 	plt.figure(figsize=(8,6), facecolor='w')
 	plt.plot(theta_in, dsig_dtheta, label='Rutherford')
-	plt.plot(theta_in, dsig_dtheta_Mott, label='Mott')
+	try:
+		plt.plot(theta_in, dsig_dtheta_Mott, label='Mott')
+	except:
+		pass
 	plt.yscale("log")
-	plt.xlabel(r'$\theta$ [{unit}]'.format(unit=angUnit),fontsize=14)
-	plt.ylabel(r'$d\sigma/dcos(\theta)$',fontsize=14)
-	plt.title(r'Distribution of $d\sigma/dcos(\theta)$ as function of the scattering angle',fontsize=16)
 	plt.legend()
-
-	plt.savefig('plot_dsig_dtheta_vs_theta.png', dpi=300, bbox_inches='tight')
-
+		if cos == 1:
+		plt.xlabel(r'$cos(\theta)$ [{unit}]'.format(unit=angUnit),fontsize=14)
+		plt.ylabel(r'$d\sigma/dcos(\theta)$',fontsize=14)
+		plt.title(r'Distribution of $d\sigma/dcos(\theta)$ as function of the scattering angle',fontsize=16)
+		plt.savefig('plot_dsig_dtheta_vs_costheta.png', dpi=300, bbox_inches='tight')
+	else: 
+		plt.xlabel(r'$\theta$ [{unit}]'.format(unit=angUnit),fontsize=14)
+		plt.ylabel(r'$d\sigma/d\theta$',fontsize=14)
+		plt.title(r'Distribution of $d\sigma/d\theta)$ as function of the scattering angle',fontsize=16)
+		plt.savefig('plot_dsig_dtheta_vs_theta.png', dpi=300, bbox_inches='tight')
 
 
 if __name__ == '__main__':
