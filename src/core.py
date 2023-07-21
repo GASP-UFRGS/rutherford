@@ -13,14 +13,11 @@ except IndexError:
 
 kinEn, zTarget, zProj, angUnit, angStart, angEnd, mott, mass = read_card(card_name)
 
-kinEn = kinEn*(1.60218e-19) # Energy of the particles in J.
+kinEn = kinEn*e # Energy of the particles in J.
 kconst = 1/(4*pi*epsilon_0)
 D = (kconst*zProj*zTarget*e**2/kinEn)*1e15 # Minimum distance between incident particles and target in fm.
-D2 = (zProj*zTarget*alpha*hbar*c/kinEn)*1e15 # D but with alfa instead of e and kconst. Used to test differences between some equations 
-#D and D2 are equal, as expected. (Actually off by a factor of ~1.7e-10)
 
-
-# Either cos, theta or omega. This exists to test conversion between equations
+# Either cos or omega. This exists to test conversion between equations
 var = 'omega'
 
 
@@ -58,12 +55,8 @@ def scattering_differential_Ruth(theta, D, angle_unit):
     if var == 'cos':
         difCrossSec = (2*pi*D**2/(1-np.cos(theta))**2)#(np.sin(theta)) #Rolf
     
-    if var == 'theta': # all wrong
-        difCrossSec = pi*D**2*np.cos(theta/2)/(4*np.sin(theta/2)**3)/(2*pi*np.sin(theta)) # Viana. If his dOmega is inconsistent with the others, then so must this be
-        # difCrossSec = 2*pi*np.sin(theta)*D**2/(16*np.sin(theta/2)**4)#/(np.sin(theta))**2 ?? testing
-
     if var == 'omega':        
-        difCrossSec = D2**2/(4*np.sin(theta/2)**4)                                        # CERN
+        difCrossSec = D**2/(16*np.sin(theta/2)**4)                                  
 
     # Only dOmega and dcos are trustworthy.
     return difCrossSec
@@ -81,11 +74,6 @@ def scattering_differential_Mott(theta, D, angle_unit):
         # Rohlf
         difCrossSec = (2*pi*D**2/(1-np.cos(theta))**2)
         difCrossSec_Mott = difCrossSec*((1+np.cos(theta))/(2*(1+(((1-np.cos(theta))*kinEn)/(mass*c**2)))))
-
-    if var == 'theta':
-        # Rohlf converted (incorrect
-        difCrossSec = 2*pi*np.sin(theta)*D**2/16*np.sin(theta/2)**4/(2*np.pi*np.sin(theta))
-        difCrossSec_Mott = difCrossSec*((1+np.cos(theta))/(2*(1+(((1-np.cos(theta))*kinEn)/(mass*c**2)))))*(np.sin(theta))
 
     if var == 'omega':
         difCrossSec = D2**2/(4*np.sin(theta/2)**4) 
