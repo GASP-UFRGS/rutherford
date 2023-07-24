@@ -11,7 +11,7 @@ except IndexError:
 
 # Constants
 
-kinEn, zTarget, zProj, angUnit, angStart, angEnd, mott, mass = read_card(card_name)
+kinEn, zTarget, zProj, angUnit, angStart, angEnd, mott, massTarget = read_card(card_name)
 
 kinEn = kinEn*e # Energy of the particles in J.
 kconst = 1/(4*pi*epsilon_0)
@@ -74,7 +74,7 @@ def scattering_differential_Mott(theta, D, angle_unit):
     if var == 'cos':
         # Rohlf
         difCrossSec = (2*pi*D**2/(1-np.cos(theta))**2)
-        difCrossSec_Mott = difCrossSec*((1+np.cos(theta))/(2*(1+(((1-np.cos(theta))*kinEn)/(mass*c**2)))))
+        difCrossSec_Mott = difCrossSec*((1+np.cos(theta))/(2*(1+(((1-np.cos(theta))*kinEn)/(massTarget*c**2)))))
 
     if var == 'omega':
         difCrossSec = D2**2/(4*np.sin(theta/2)**4) 
