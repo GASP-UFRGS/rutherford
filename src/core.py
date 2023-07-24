@@ -13,10 +13,11 @@ except IndexError:
 
 kinEn, zTarget, zProj, angUnit, angStart, angEnd, mott, massTarget = read_card(card_name)
 
-kinEn = kinEn*e # Energy of the particles in J.
+kinEn = kinEn*e # Converts energy of incoming particles to Joules.
 kconst = 1/(4*pi*epsilon_0)
-D = (kconst*zProj*zTarget*e**2/kinEn)*1e15 # Minimum distance between incident particles and target in fm.
-D2 = (zProj*zTarget*alpha*hbar*c/(2*kinEn))*1e15
+fm = 1e15 # conversion factor to femtometer
+D = (kconst*zProj*zTarget*e**2/kinEn) * fm # Minimum distance between incident particles and target in fm.
+
 
 # Either cos or omega. This exists to test conversion between equations
 var = 'omega'
