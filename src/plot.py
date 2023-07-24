@@ -10,17 +10,17 @@ def plot(output,card):
 	#Read parameter input card 
 	parameters = read_card(card)
 	angUnit = parameters[3]
+	mott = parameters[6]
 	
 	theta_in = data[:, 0]  
 	b_out = data[:, 1]
 	dsig_dtheta = data[:, 2]
-	try:
+	if mott == "true":
 		dsig_dtheta_Mott = data[:, 3]
-	except:
-		pass
+	
 
 	# Triggers for changing label to dcos(theta)
-	cos = 0
+	cos = True
 	
 	# b vs theta
 
@@ -46,10 +46,11 @@ def plot(output,card):
 
 	plt.figure(figsize=(8,6), facecolor='w')
 	plt.plot(theta_in, dsig_dtheta, label='Rutherford')
-	plt.plot(theta_in, dsig_dtheta_Mott, label='Mott')
+	if mott == "true":
+		plt.plot(theta_in, dsig_dtheta_Mott, label='Mott')
 	plt.yscale("log")
 	plt.legend()
-	if cos == 1:
+	if cos:
 		plt.xlabel(r'$cos(\theta)$ [{unit}]'.format(unit=angUnit),fontsize=14)
 		plt.ylabel(r'$d\sigma/dcos(\theta)$',fontsize=14)
 		plt.title(r'Distribution of $d\sigma/dcos(\theta)$ as function of the scattering angle',fontsize=16)

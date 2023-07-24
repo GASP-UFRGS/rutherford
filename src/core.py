@@ -91,7 +91,7 @@ b_out = impact_parameter(theta_in, D, angUnit) # Impact parameter calculated.
 
 dsig_dtheta = scattering_differential_Ruth(theta_in, D, angUnit) #Differential scattering cross section
 
-if mott == 'y':
+if mott == 'true':
     dsig_dtheta_Mott = scattering_differential_Mott(theta_in, D, angUnit) # Mott correction cross section
 
 
@@ -106,7 +106,10 @@ if angUnit == 'radians':
 
 file_path = "output.dat"
 
-data = np.column_stack((theta_in, b_out, dsig_dtheta, dsig_dtheta_Mott))
+data = np.column_stack((theta_in, b_out, dsig_dtheta))
+
+if mott == "true":
+    data = np.column_stack((data, dsig_dtheta_Mott))
 
 np.savetxt(file_path, data, delimiter=",")
 
