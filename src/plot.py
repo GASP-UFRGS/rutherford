@@ -20,7 +20,7 @@ def plot(output,card):
 	
 
 	# Triggers for changing label to dcos(theta)
-	cos = True
+	cos = False
 	
 	# b vs theta
 

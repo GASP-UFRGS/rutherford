@@ -1,7 +1,7 @@
 import numpy as np
 import sys
 from card_reader import read_card, _raise_missing_card_error 
-from scipy.constants import epsilon_0, pi, e, alpha, hbar, c
+from scipy.constants import epsilon_0, pi, e
 
 try:
     card_name = sys.argv[1]
@@ -15,11 +15,11 @@ kinEn, zTarget, zProj, angUnit, angStart, angEnd, mott, massTarget = read_card(c
 
 kinEn = kinEn*e # Converts energy of incoming particles to Joules.
 kconst = 1/(4*pi*epsilon_0)
-fm = 1e15 # conversion factor to femtometer
+fm = 1e15 # conversion factor to femtometer.
 D = (kconst*zProj*zTarget*e**2/kinEn) * fm # Minimum distance between incident particles and target in fm.
 
 
-# Either cos or omega. This exists to test conversion between equations
+# Either cos, theta or omega. 
 var = 'omega'
 
 
@@ -55,7 +55,10 @@ def scattering_differential_Ruth(theta, D, angle_unit):
         theta = np.radians(theta)
 
     if var == 'cos':
-        difCrossSec = (2*pi*D**2/(1-np.cos(theta))**2)#(np.sin(theta)) #Rolf
+        difCrossSec = (2*pi*D**2/(1-np.cos(theta))**2)
+
+    if var == 'theta': 
+        difCrossSec = (D**2*pi*np.cos(theta/2)/(4*np.sin(theta/2)**3))
     
     if var == 'omega':        
         difCrossSec = D**2/(16*np.sin(theta/2)**4)                                  
@@ -73,12 +76,15 @@ def scattering_differential_Mott(theta, D, angle_unit):
 
 
     if var == 'cos':
-        # Rohlf
         difCrossSec = (2*pi*D**2/(1-np.cos(theta))**2)
         difCrossSec_Mott = difCrossSec*((1+np.cos(theta))/(2*(1+(((1-np.cos(theta))*kinEn)/(massTarget*c**2)))))
 
+    if var == 'theta':
+        difCrossSec = (D**2*pi*np.cos(theta/2)/(4*np.sin(theta/2)**3))
+        difCrossSec_Mott = difCrossSec * np.cos(theta/2)**2
+
     if var == 'omega':
-        difCrossSec = D2**2/(4*np.sin(theta/2)**4) 
+        difCrossSec = D**2/(16*np.sin(theta/2)**4) 
         difCrossSec_Mott = difCrossSec*np.cos(theta/2)**2   
 
     return difCrossSec_Mott 
@@ -89,10 +95,10 @@ def scattering_differential_Mott(theta, D, angle_unit):
 theta_in = np.linspace(angStart,angEnd,1000)[1:] # Scattering angle input.
 b_out = impact_parameter(theta_in, D, angUnit) # Impact parameter calculated.
 
-difCrossSec = scattering_differential_Ruth(theta_in, D, angUnit) #Differential scattering cross section
+difCrossSec = scattering_differential_Ruth(theta_in, D, angUnit) #Differential scattering cross section.
 
 if mott == 'true':
-    difCrossSec_Mott = scattering_differential_Mott(theta_in, D, angUnit) # Mott correction cross section
+    difCrossSec_Mott = scattering_differential_Mott(theta_in, D, angUnit) # Mott correction cross section.
 
 
 if var == 'cos':
