@@ -7,5 +7,5 @@ Input parameters:
 degrees     	: [angUnit] Angle unit (radians or degrees)
 0           	: [angStart] Start of angle interval (chosen unit)
 179         	: [angEnd] End of angle interval (chosen unit)
-true        	: [mott] Compute mott correction (y or n)
-3.34899e+30 	: [massTarget] Mass of target nucleus
+true        	: [mott] Compute mott correction (true or false)
+184834      	: [massTarget] Mass of target nucleus (MeV/c²)
