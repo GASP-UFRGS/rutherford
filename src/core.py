@@ -11,7 +11,15 @@ except IndexError:
 
 # Constants
 
-kinEn, zTarget, zProj, angUnit, angStart, angEnd, mott, massTarget = read_card(card_name)
+parameters = read_card(card_name)
+kinEn = parameters[0]
+zTarget = parameters[1] 
+zProj = parameters[2]
+angUnit = parameters[3]
+angStart = parameters[4]
+angEnd = parameters[5]
+mott = parameters[6]
+massTarget = parameters[7]
 
 kinEn = kinEn*e # Converts energy of incoming particles to Joules.
 kconst = 1/(4*pi*epsilon_0)
