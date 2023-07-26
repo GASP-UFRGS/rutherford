@@ -2,6 +2,7 @@ from card_reader import read_card, _raise_missing_card_error
 import matplotlib.pyplot as plt
 import numpy as np
 import json
+import sys
 
 def plot(output,card):
 
@@ -27,7 +28,7 @@ def plot(output,card):
 	hof = True
 
 	# Read Hofstadter data 
-	with open("Hofstadter.json", "r") as json_file:
+	with open(sys.path[0] + '/../data/Hofstadter.json', 'r') as json_file:
 	    real = json.load(json_file)
 
 
