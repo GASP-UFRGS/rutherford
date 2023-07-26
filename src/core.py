@@ -54,33 +54,30 @@ def scattering_differential_Ruth(theta, D):
     Returns differential scattering impact when given the scattering angle.
     """
     if var == 'cos':
-        difCrossSec = (2*pi*D**2/(1-np.cos(theta))**2)
+        difCrossSec_Ruth = (2*pi*D**2/(1-np.cos(theta))**2)
 
     if var == 'theta': 
-        difCrossSec = (D**2*pi*np.cos(theta/2)/(4*np.sin(theta/2)**3))
+        difCrossSec_Ruth = (D**2*pi*np.cos(theta/2)/(4*np.sin(theta/2)**3))
     
     if var == 'omega':        
-        difCrossSec = D**2/(16*np.sin(theta/2)**4)                                  
+        difCrossSec_Ruth = D**2/(16*np.sin(theta/2)**4)                                  
 
-    return difCrossSec
+    return difCrossSec_Ruth
 
 
 
-def scattering_differential_Mott(theta, D):
+def scattering_differential_Mott(theta, difCrossSec_Ruth, D):
     """
     Returns differential scattering impact when given the scattering angle.
     """
     if var == 'cos':
-        difCrossSec = (2*pi*D**2/(1-np.cos(theta))**2)
-        difCrossSec_Mott = difCrossSec*((1+np.cos(theta))/(2*(1+(((1-np.cos(theta))*kinEn)/(massTarget*c**2)))))
+        difCrossSec_Mott = difCrossSec_Ruth * ((1+np.cos(theta))/(2*(1+(((1-np.cos(theta))*kinEn)/(massTarget*c**2)))))
 
     if var == 'theta':
-        difCrossSec = (D**2*pi*np.cos(theta/2)/(4*np.sin(theta/2)**3))
-        difCrossSec_Mott = difCrossSec * np.cos(theta/2)**2
+        difCrossSec_Mott = difCrossSec_Ruth * np.cos(theta/2)**2
 
     if var == 'omega':
-        difCrossSec = D**2/(16*np.sin(theta/2)**4) 
-        difCrossSec_Mott = difCrossSec*np.cos(theta/2)**2     
+        difCrossSec_Mott = difCrossSec_Ruth * np.cos(theta/2)**2   
 
     return difCrossSec_Mott 
 
@@ -94,11 +91,11 @@ if angUnit == 'degrees':
     theta_in = np.radians(theta_in)
 
 b_out = impact_parameter(theta_in, D) # Impact parameter calculated.
-difCrossSec = scattering_differential_Ruth(theta_in, D) #Differential scattering cross section.
+difCrossSec_Ruth = scattering_differential_Ruth(theta_in, D) #Differential scattering cross section.
 
 
 if mott == 'true':
-    difCrossSec_Mott = scattering_differential_Mott(theta_in, D) # Mott correction cross section.
+    difCrossSec_Mott = scattering_differential_Mott(theta_in, difCrossSec_Ruth, D) # Mott correction cross section.
 
 
 if var == 'cos':
@@ -110,7 +107,7 @@ else:
 # Write to file
 
 file_path = "output.dat"
-data = np.column_stack((theta_in, b_out, difCrossSec))
+data = np.column_stack((theta_in, b_out, difCrossSec_Ruth))
 
 if mott == "true":
     data = np.column_stack((data, difCrossSec_Mott))
