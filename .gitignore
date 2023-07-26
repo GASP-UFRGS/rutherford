@@ -132,5 +132,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# output file
+# Visual Studio cache/options directory
+.vs/
+
+# Output file
 /src/output.dat
