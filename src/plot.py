@@ -104,6 +104,8 @@ def plot(output,card_name):
 	col_names = [E["value"] for E in real["qualifiers"]['E']]
 
 	if hof300 == 'true':
+		if kinEn != 3e6:
+			print('Are you sure you want to plot data with 300MeV? Chosen kinetic energy (kinEn) is not 300Mev!')
 		hof = True
 		dsigdOmega_300 = [float(entry["y"][0]["value"]) for entry in real["values"]]
 
@@ -113,6 +115,8 @@ def plot(output,card_name):
 		plt.errorbar(hofAngles, dsigdOmega_300, yerr=[float(entry["y"][0]["errors"][0]["symerror"]) for entry in real["values"]], capsize = 3, ls='none', label="Hoftstadter "+col_names[0]) 
 			
 	if hof400 == 'true':
+		if kinEn != 4e6:
+			print('Are you sure you want to plot data with 400MeV? Chosen kinetic energy (kinEn) is not 400Mev!')
 		hof = True
 		dsigdOmega_400 = [float(entry["y"][1]["value"]) for entry in real["values"]]
 
@@ -123,11 +127,15 @@ def plot(output,card_name):
 
 	# Data from 500MeV has a datapoint with zero uncertainty, so it is ignored
 	if hof500 == 'true':
+		if kinEn != 5e6:
+			print('Are you sure you want to plot data with 500MeV? Chosen kinetic energy (kinEn) is not 500Mev!')
 		hof = True
 		dsigdOmega_500 = [float(entry["y"][2]["value"]) for entry in real["values"] if entry["y"][2]["value"] != "-"]
 		plt.errorbar(hofAngles[1:], dsigdOmega_500, yerr=[float(entry["y"][2]["errors"][0]["symerror"]) for entry in real["values"] if entry["y"][2]["errors"][0]["symerror"] != 0], capsize = 3, ls='none', label="Hoftstadter "+col_names[2])
 
 	if hof550 == 'true':
+		if kinEn != 5.5e6:
+			print('Are you sure you want to plot data with 550MeV? Chosen kinetic energy (kinEn) is not 550Mev!')
 		hof = True
 		dsigdOmega_550 = [float(entry["y"][3]["value"]) for entry in real["values"]]
 
