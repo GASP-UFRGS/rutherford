@@ -27,7 +27,7 @@ def plot(output,card_name):
 	
 
 	# Either cos, theta or omega. 
-	var = 'theta'
+	var = 'omega'
 
 
 	# Read Hofstadter data 
@@ -78,6 +78,13 @@ def plot(output,card_name):
 		plt.xlabel(r'$\theta$ [{unit}]'.format(unit=angUnit),fontsize=14)
 		plt.ylabel(r'$d\sigma/d\theta$',fontsize=14)
 		plt.title(r'Distribution of $d\sigma/d\theta$ as function of the scattering angle',fontsize=16)
+
+	elif var == 'omega':
+		pltName += 'domega_vs_theta'
+		plt.xlabel(r'$\theta$ [{unit}]'.format(unit=angUnit),fontsize=14)
+		plt.ylabel(r'$d\sigma/d\Omega$',fontsize=14)
+		plt.title(r'Distribution of $d\sigma/d\Omega$ as function of the scattering angle',fontsize=16)
+
 		"""
 		Hoftstadter data
 		Data from 500MeV has a datapoint with zero uncertainty, so it is ignored
@@ -109,11 +116,7 @@ def plot(output,card_name):
 		
 		if hof == True:
 			pltName += '_hoftstadter'
-	elif var == 'omega':
-		pltName += 'domega_vs_theta'
-		plt.xlabel(r'$\theta$ [{unit}]'.format(unit=angUnit),fontsize=14)
-		plt.ylabel(r'$d\sigma/d\Omega$',fontsize=14)
-		plt.title(r'Distribution of $d\sigma/d\Omega$ as function of the scattering angle',fontsize=16)
+
 	plt.legend()
 	plt.savefig(pltName, dpi=300, bbox_inches='tight')
 
