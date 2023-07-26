@@ -1,19 +1,23 @@
-from pickle import NONE
 from card_reader import read_card, _raise_missing_card_error 
 import matplotlib.pyplot as plt
 import numpy as np
 import json
 import sys
 
-def plot(output,card):
+def plot(output,card_name):
 
 	# Read file
 	data = np.loadtxt(output, delimiter=",")
 
 	#Read parameter input card 
-	parameters = read_card(card)
+	parameters = read_card(card_name)
+	kinEn = parameters[0]
 	angUnit = parameters[3]
 	mott = parameters[6]
+	hof300 = parameters[8]
+	hof400 = parameters[9]
+	hof500 = parameters[10]
+	hof550 = parameters[11]
 	
 	theta_in = data[:, 0]  
 	b_out = data[:, 1]
@@ -25,8 +29,6 @@ def plot(output,card):
 	# Either cos, theta or omega. 
 	var = 'theta'
 
-	# Set Hofstadter True or False
-	hof = True
 
 	# Read Hofstadter data 
 	with open(sys.path[0] + '/../data/Hofstadter.json', 'r') as json_file:
@@ -34,7 +36,7 @@ def plot(output,card):
 
 
 	# b vs theta
-
+	
 	plt.figure(figsize=(8,6), facecolor='w')
 	plt.plot(theta_in, b_out)
 	plt.ylabel(r'$b$ [fm]',fontsize=14)
@@ -76,33 +78,44 @@ def plot(output,card):
 		plt.xlabel(r'$\theta$ [{unit}]'.format(unit=angUnit),fontsize=14)
 		plt.ylabel(r'$d\sigma/d\theta$',fontsize=14)
 		plt.title(r'Distribution of $d\sigma/d\theta$ as function of the scattering angle',fontsize=16)
-		#Use hoftstadter data
-		if hof:
-			pltName += '_hoftstadter'
+		"""
+		Hoftstadter data
+		Data from 500MeV has a datapoint with zero uncertainty, so it is ignored
+		"""
+		# Extract the x and y values from the JSON data
+		hofAngles = [float(entry["x"][0]["value"]) for entry in real["values"]]
+		# Get energy value for labels
+		col_names = [E["value"] for E in real["qualifiers"]['E']]
 
-			# Extract the x and y values from the JSON data
-			# Data from 500MeV has a datapoint with zero uncertainty, so it is ignored
-			hofAngles = [float(entry["x"][0]["value"]) for entry in real["values"]]
-
-			col_names = [E["value"] for E in real["qualifiers"]['E']]
-
+		if hof300 == 'true':
+			hof = True
 			dsigdOmega_300 = [float(entry["y"][0]["value"]) for entry in real["values"]]
-			dsigdOmega_400 = [float(entry["y"][1]["value"]) for entry in real["values"]]
-			dsigdOmega_500 = [float(entry["y"][2]["value"]) for entry in real["values"] if entry["y"][2]["value"] != "-"]
-			dsigdOmega_550 = [float(entry["y"][3]["value"]) for entry in real["values"]]
+			plt.errorbar(hofAngles, dsigdOmega_300, yerr=[float(entry["y"][0]["errors"][0]["symerror"]) for entry in real["values"]], capsize = 3, ls='none', label="Hoftstadter "+col_names[0]) 
 			
-			plt.errorbar(hofAngles,     dsigdOmega_300, yerr=[float(entry["y"][0]["errors"][0]["symerror"]) for entry in real["values"]], capsize = 3, ls='none', label=col_names[0]) 
-			plt.errorbar(hofAngles,     dsigdOmega_400, yerr=[float(entry["y"][1]["errors"][0]["symerror"]) for entry in real["values"]],  capsize = 3, ls='none', label=col_names[1])
-			plt.errorbar(hofAngles[1:], dsigdOmega_500, yerr=[float(entry["y"][2]["errors"][0]["symerror"]) for entry in real["values"] if entry["y"][2]["errors"][0]["symerror"] != 0], capsize = 3, ls='none', label=col_names[2])
-			plt.errorbar(hofAngles,     dsigdOmega_550, yerr=[float(entry["y"][3]["errors"][0]["symerror"]) for entry in real["values"]],  capsize = 3, ls='none', label=col_names[3])
+		if hof400 == 'true':
+			hof = True
+			dsigdOmega_400 = [float(entry["y"][1]["value"]) for entry in real["values"]]
+			plt.errorbar(hofAngles, dsigdOmega_400, yerr=[float(entry["y"][1]["errors"][0]["symerror"]) for entry in real["values"]],  capsize = 3, ls='none', label="Hoftstadter "+col_names[1])
+
+		if hof500 == 'true':
+			hof = True
+			dsigdOmega_500 = [float(entry["y"][2]["value"]) for entry in real["values"] if entry["y"][2]["value"] != "-"]
+			plt.errorbar(hofAngles[1:], dsigdOmega_500, yerr=[float(entry["y"][2]["errors"][0]["symerror"]) for entry in real["values"] if entry["y"][2]["errors"][0]["symerror"] != 0], capsize = 3, ls='none', label="Hoftstadter "+col_names[2])
+
+		if hof550 == 'true':
+			hof = True
+			dsigdOmega_550 = [float(entry["y"][3]["value"]) for entry in real["values"]]
+			plt.errorbar(hofAngles, dsigdOmega_550, yerr=[float(entry["y"][3]["errors"][0]["symerror"]) for entry in real["values"]],  capsize = 3, ls='none', label="Hoftstadter "+col_names[3])
 		
+		if hof == True:
+			pltName += '_hoftstadter'
 	elif var == 'omega':
 		pltName += 'domega_vs_theta'
 		plt.xlabel(r'$\theta$ [{unit}]'.format(unit=angUnit),fontsize=14)
 		plt.ylabel(r'$d\sigma/d\Omega$',fontsize=14)
 		plt.title(r'Distribution of $d\sigma/d\Omega$ as function of the scattering angle',fontsize=16)
 	plt.legend()
-	plt.savefig(pltName+',png', dpi=300, bbox_inches='tight')
+	plt.savefig(pltName, dpi=300, bbox_inches='tight')
 
 
 if __name__ == '__main__':

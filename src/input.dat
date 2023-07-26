@@ -5,7 +5,14 @@ Input parameters:
 79          	: [zTarget] Proton number of the target
 2           	: [zProj] Proton number of the projectiles
 degrees     	: [angUnit] Angle unit (radians or degrees)
-0           	: [angStart] Start of angle interval (chosen unit)
-179         	: [angEnd] End of angle interval (chosen unit)
+30           	: [angStart] Start of angle interval (chosen unit)
+135         	: [angEnd] End of angle interval (chosen unit)
 true        	: [mott] Compute mott correction (true or false)
 184834      	: [massTarget] Mass of target nucleus (MeV/c**2)
+
+Compare with:
+Data from E.E.Chambers and R.Hofstadter, 1956(https://www.hepdata.net/record/ins945003)
+true        	: [hoftstadter300] 
+true        	: [hoftstadter400] 
+true        	: [hoftstadter500] 
+true        	: [hoftstadter550] 
