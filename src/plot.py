@@ -1,3 +1,4 @@
+from pickle import NONE
 from card_reader import read_card, _raise_missing_card_error 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -78,17 +79,22 @@ def plot(output,card):
 		#Use hoftstadter data
 		if hof:
 			pltName += '_hoftstadter'
+
 			# Extract the x and y values from the JSON data
+			# Data from 500MeV has a datapoint with zero uncertainty, so it is ignored
 			hofAngles = [float(entry["x"][0]["value"]) for entry in real["values"]]
+
+			col_names = [E["value"] for E in real["qualifiers"]['E']]
+
 			dsigdOmega_300 = [float(entry["y"][0]["value"]) for entry in real["values"]]
 			dsigdOmega_400 = [float(entry["y"][1]["value"]) for entry in real["values"]]
-			dsigdOmega_500 = [float(entry["y"][2]["value"]) if entry["y"][2]["value"] != "-" else None for entry in real["values"]]
+			dsigdOmega_500 = [float(entry["y"][2]["value"]) for entry in real["values"] if entry["y"][2]["value"] != "-"]
 			dsigdOmega_550 = [float(entry["y"][3]["value"]) for entry in real["values"]]
-
-			plt.plot(hofAngles, dsigdOmega_300, label='Hofstadter 300 MeV')
-			plt.plot(hofAngles, dsigdOmega_400, label='Hofstadter 400 MeV')
-			plt.plot(hofAngles, dsigdOmega_500, label='Hofstadter 500 MeV')
-			plt.plot(hofAngles, dsigdOmega_550, label='Hofstadter 550 MeV')
+			
+			plt.errorbar(hofAngles,     dsigdOmega_300, yerr=[float(entry["y"][0]["errors"][0]["symerror"]) for entry in real["values"]], capsize = 3, ls='none', label=col_names[0]) 
+			plt.errorbar(hofAngles,     dsigdOmega_400, yerr=[float(entry["y"][1]["errors"][0]["symerror"]) for entry in real["values"]],  capsize = 3, ls='none', label=col_names[1])
+			plt.errorbar(hofAngles[1:], dsigdOmega_500, yerr=[float(entry["y"][2]["errors"][0]["symerror"]) for entry in real["values"] if entry["y"][2]["errors"][0]["symerror"] != 0], capsize = 3, ls='none', label=col_names[2])
+			plt.errorbar(hofAngles,     dsigdOmega_550, yerr=[float(entry["y"][3]["errors"][0]["symerror"]) for entry in real["values"]],  capsize = 3, ls='none', label=col_names[3])
 		
 	elif var == 'omega':
 		pltName += 'domega_vs_theta'
