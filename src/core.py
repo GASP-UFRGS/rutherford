@@ -63,8 +63,8 @@ def scattering_differential_Ruth(theta, D, angle_unit):
     if var == 'omega':        
         difCrossSec = D**2/(16*np.sin(theta/2)**4)                                  
 
-    # Only dOmega and dcos are trustworthy.
     return difCrossSec
+
 
 
 def scattering_differential_Mott(theta, D, angle_unit):
@@ -73,7 +73,6 @@ def scattering_differential_Mott(theta, D, angle_unit):
     """
     if angle_unit == 'degrees':
         theta = np.radians(theta)
-
 
     if var == 'cos':
         difCrossSec = (2*pi*D**2/(1-np.cos(theta))**2)
