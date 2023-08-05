@@ -19,7 +19,7 @@ def _raise_missing_card_error():
 # Dictionary that contains the necessary parameters
 # of each procedure
 procs = {
-    'thvsb': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'angStart', 'angEnd', 'mott', 'massTarget', 'hoftstadter300', 'hoftstadter400', 'hoftstadter500', 'hoftstadter550')
+    'thvsb': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'angStart', 'angEnd', 'mott', 'massTarget', 'var',  'hoftstadter300', 'hoftstadter400', 'hoftstadter500', 'hoftstadter550')
 }
 
 # Empty dictionary that will receive the parameters
@@ -45,7 +45,7 @@ def read_card(file_name):
     if tuple(params) != procs[procedure]:
         _raise_parameters_error()
 
-    return tuple(params.values())
+    return params
 
 if __name__ == '__main__':
     print(read_card('input.dat'))

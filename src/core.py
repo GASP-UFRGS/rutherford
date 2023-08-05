@@ -11,15 +11,15 @@ except IndexError:
 
 # Constants
 
-parameters = read_card(card_name)
-kinEn = parameters[0]
-zTarget = parameters[1] 
-zProj = parameters[2]
-angUnit = parameters[3]
-angStart = parameters[4]
-angEnd = parameters[5]
-mott = parameters[6]
-massTarget = parameters[7]
+kinEn = parameters.get('kinEn')
+zTarget = parameters.get('zTarget') 
+zProj = parameters.get('zProj') 
+angUnit = parameters.get('angUnit') 
+angStart = parameters.get('angStart') 
+angEnd = parameters.get('angEnd') 
+mott = parameters.get('mott') 
+recoil = parameters.get('recoil') 
+massTarget = parameters.get('massTarget') 
 
 kinEn = kinEn*e # Converts energy of incoming particles to Joules.
 kconst = 1/(4*pi*epsilon_0)
@@ -28,7 +28,7 @@ D = (kconst*zProj*zTarget*e**2/kinEn) * fm # Minimum distance between incident p
 
 
 # Either cos, theta or omega. 
-var = 'omega'
+var = parameters.get('var')
 
 
 # Functions

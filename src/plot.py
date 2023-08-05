@@ -11,13 +11,14 @@ def plot(output,card_name):
 
 	#Read parameter input card 
 	parameters = read_card(card_name)
-	kinEn = parameters[0]
-	angUnit = parameters[3]
-	mott = parameters[6]
-	hof300 = parameters[8]
-	hof400 = parameters[9]
-	hof500 = parameters[10]
-	hof550 = parameters[11]
+	kinEn = parameters.get('kinEn')
+	angUnit = parameters.get('angUnit')
+	mott = parameters.get('mott')
+	hof300 = parameters.get('hoftstadter300')
+	hof400 = parameters.get('hoftstadter400')
+	hof500 = parameters.get('hoftstadter500')
+	hof550 = parameters.get('hoftstadter550')
+	hof = False
 	
 	theta_in = data[:, 0]  
 	b_out = data[:, 1]
@@ -27,7 +28,7 @@ def plot(output,card_name):
 	
 
 	# Either cos, theta or omega. 
-	var = 'omega'
+	var = parameters.get('var')
 
 
 	# Read Hofstadter data 
