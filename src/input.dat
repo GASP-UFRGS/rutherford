@@ -8,7 +8,7 @@ degrees     	: [angUnit] Angle unit (radians or degrees)
 30           	: [angStart] Start of angle interval (chosen unit)
 135         	: [angEnd] End of angle interval (chosen unit)
 true        	: [mott] Compute mott correction (true or false)
-cos				: [var] variable to calculate differential cross section
+cos         	: [var] variable to calculate differential cross section
 
 Compare with:
 Data from E.E.Chambers and R.Hofstadter, 1956(https://www.hepdata.net/record/ins945003)
