@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+import periodictable
 from card_reader import read_card, _raise_missing_card_error 
 from scipy.constants import epsilon_0, pi, e, c
 
@@ -20,6 +21,12 @@ angEnd = parameters.get('angEnd')
 mott = parameters.get('mott') 
 recoil = parameters.get('recoil') 
 massTarget = parameters.get('massTarget') 
+
+# Outputs Nuclear mass in atomic mass units (u).
+element = periodictable.elements[zTarget]
+massTarget = element.mass
+
+massTarget = massTarget*1.6605402E-27 # Converts mass to kg
 
 kinEn = kinEn*e # Converts energy of incoming particles to Joules.
 kconst = 1/(4*pi*epsilon_0)

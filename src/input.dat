@@ -8,7 +8,6 @@ degrees     	: [angUnit] Angle unit (radians or degrees)
 30           	: [angStart] Start of angle interval (chosen unit)
 135         	: [angEnd] End of angle interval (chosen unit)
 true        	: [mott] Compute mott correction (true or false)
-184834      	: [massTarget] Mass of target nucleus (MeV/c**2)
 cos				: [var] variable to calculate differential cross section
 
 Compare with:
