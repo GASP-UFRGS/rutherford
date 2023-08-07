@@ -12,6 +12,7 @@ except IndexError:
 
 # Constants
 
+parameters = read_card(card_name)
 kinEn = parameters.get('kinEn')
 zTarget = parameters.get('zTarget') 
 zProj = parameters.get('zProj') 
