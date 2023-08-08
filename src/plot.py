@@ -11,13 +11,14 @@ def plot(output,card_name):
 
 	#Read parameter input card 
 	parameters = read_card(card_name)
-	kinEn = parameters[0]
-	angUnit = parameters[3]
-	mott = parameters[6]
-	hof300 = parameters[8]
-	hof400 = parameters[9]
-	hof500 = parameters[10]
-	hof550 = parameters[11]
+	kinEn = parameters.get('kinEn')
+	angUnit = parameters.get('angUnit')
+	mott = parameters.get('mott')
+	hof300 = parameters.get('hoftstadter300')
+	hof400 = parameters.get('hoftstadter400')
+	hof500 = parameters.get('hoftstadter500')
+	hof550 = parameters.get('hoftstadter550')
+	hof = False
 	
 	theta_in = data[:, 0]  
 	b_out = data[:, 1]
@@ -27,7 +28,7 @@ def plot(output,card_name):
 	
 
 	# Either cos, theta or omega. 
-	var = 'omega'
+	cross_section_variable = parameters.get('cross_section_variable')
 
 
 	# Read Hofstadter data 
@@ -80,20 +81,20 @@ def plot(output,card_name):
 
 
 	# Change axis labels
-	if var == 'cos':
+	if cross_section_variable == 'cos':
 		pltName += 'dcostheta_vs_costheta'
 		hofAngles = np.cos(np.radians(hofAngles))
 		plt.xlabel(r'$cos(\theta)$'.format(unit=angUnit),fontsize=14)
 		plt.ylabel(r'$d\sigma/dcos(\theta)$',fontsize=14)
 		plt.title(r'Distribution of $d\sigma/dcos(\theta)$ as function of the scattering angle',fontsize=16)
 
-	elif var == 'theta': 
+	elif cross_section_variable == 'theta': 
 		pltName += 'dtheta_vs_theta'
 		plt.xlabel(r'$\theta$ [{unit}]'.format(unit=angUnit),fontsize=14)
 		plt.ylabel(r'$d\sigma/d\theta$',fontsize=14)
 		plt.title(r'Distribution of $d\sigma/d\theta$ as function of the scattering angle',fontsize=16)
 
-	elif var == 'omega':
+	elif cross_section_variable == 'omega':
 		pltName += 'domega_vs_theta'
 		plt.xlabel(r'$\theta$ [{unit}]'.format(unit=angUnit),fontsize=14)
 		plt.ylabel(r'$d\sigma/d\Omega$',fontsize=14)
