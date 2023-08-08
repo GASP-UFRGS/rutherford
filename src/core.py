@@ -36,7 +36,7 @@ D = (kconst*zProj*zTarget*e**2/kinEn) * fm # Minimum distance between incident p
 
 
 # Either cos, theta or omega. 
-var = parameters.get('var')
+cross_section_variable = parameters.get('cross_section_variable')
 
 
 # Functions
@@ -61,13 +61,13 @@ def scattering_differential_Ruth(theta, D):
     """
     Returns differential scattering impact when given the scattering angle.
     """
-    if var == 'cos':
+    if cross_section_variable == 'cos':
         difCrossSec_Ruth = (2*pi*D**2/(1-np.cos(theta))**2)
 
-    if var == 'theta': 
+    if cross_section_variable == 'theta': 
         difCrossSec_Ruth = (D**2*pi*np.cos(theta/2)/(4*np.sin(theta/2)**3))
     
-    if var == 'omega':        
+    if cross_section_variable == 'omega':        
         difCrossSec_Ruth = D**2/(16*np.sin(theta/2)**4)                                  
 
     return difCrossSec_Ruth
@@ -78,13 +78,13 @@ def scattering_differential_Mott(theta, difCrossSec_Ruth, D):
     """
     Returns differential scattering impact when given the scattering angle.
     """
-    if var == 'cos':
+    if cross_section_variable == 'cos':
         difCrossSec_Mott = difCrossSec_Ruth * ((1+np.cos(theta))/(2*(1+(((1-np.cos(theta))*kinEn)/(massTarget*c**2)))))
 
-    if var == 'theta':
+    if cross_section_variable == 'theta':
         difCrossSec_Mott = difCrossSec_Ruth * np.cos(theta/2)**2
 
-    if var == 'omega':
+    if cross_section_variable == 'omega':
         difCrossSec_Mott = difCrossSec_Ruth * np.cos(theta/2)**2   
 
     return difCrossSec_Mott 
@@ -106,7 +106,7 @@ if mott == 'true':
     difCrossSec_Mott = scattering_differential_Mott(theta_in, difCrossSec_Ruth, D) # Mott correction cross section.
 
 
-if var == 'cos':
+if cross_section_variable == 'cos':
     theta_in = np.cos(theta_in)
 else:
     theta_in = np.degrees(theta_in)

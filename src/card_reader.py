@@ -19,7 +19,7 @@ def _raise_missing_card_error():
 # Dictionary that contains the necessary parameters
 # of each procedure
 procs = {
-    'thvsb': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'angStart', 'angEnd', 'mott', 'var',  'hoftstadter300', 'hoftstadter400', 'hoftstadter500', 'hoftstadter550')
+    'thvsb': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'angStart', 'angEnd', 'mott', 'cross_section_variable',  'hoftstadter300', 'hoftstadter400', 'hoftstadter500', 'hoftstadter550')
 }
 
 # Empty dictionary that will receive the parameters

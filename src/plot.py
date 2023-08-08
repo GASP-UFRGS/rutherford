@@ -28,7 +28,7 @@ def plot(output,card_name):
 	
 
 	# Either cos, theta or omega. 
-	var = parameters.get('var')
+	cross_section_variable = parameters.get('cross_section_variable')
 
 
 	# Read Hofstadter data 
@@ -81,20 +81,20 @@ def plot(output,card_name):
 
 
 	# Change axis labels
-	if var == 'cos':
+	if cross_section_variable == 'cos':
 		pltName += 'dcostheta_vs_costheta'
 		hofAngles = np.cos(np.radians(hofAngles))
 		plt.xlabel(r'$cos(\theta)$'.format(unit=angUnit),fontsize=14)
 		plt.ylabel(r'$d\sigma/dcos(\theta)$',fontsize=14)
 		plt.title(r'Distribution of $d\sigma/dcos(\theta)$ as function of the scattering angle',fontsize=16)
 
-	elif var == 'theta': 
+	elif cross_section_variable == 'theta': 
 		pltName += 'dtheta_vs_theta'
 		plt.xlabel(r'$\theta$ [{unit}]'.format(unit=angUnit),fontsize=14)
 		plt.ylabel(r'$d\sigma/d\theta$',fontsize=14)
 		plt.title(r'Distribution of $d\sigma/d\theta$ as function of the scattering angle',fontsize=16)
 
-	elif var == 'omega':
+	elif cross_section_variable == 'omega':
 		pltName += 'domega_vs_theta'
 		plt.xlabel(r'$\theta$ [{unit}]'.format(unit=angUnit),fontsize=14)
 		plt.ylabel(r'$d\sigma/d\Omega$',fontsize=14)
