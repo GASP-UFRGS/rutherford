@@ -42,10 +42,12 @@ def plot(output,card_name):
 	kinEn = parameters.get('kinEn')
 	angUnit = parameters.get('angUnit')
 	mott = parameters.get('mott')
+	hof25 = parameters.get('hoftstadter25') 
+	hof125 = parameters.get('hoftstadter125')
 	hof300 = parameters.get('hoftstadter300')
 	hof400 = parameters.get('hoftstadter400')
 	hof550 = parameters.get('hoftstadter550')
-	hof = False
+	hof = any([hof25, hof125, hof300, hof400, hof550])
 	
 	theta_in = data[:, 0]  
 	b_out = data[:, 1]
@@ -56,11 +58,6 @@ def plot(output,card_name):
 
 	# Either cos, theta or omega. 
 	cross_section_variable = parameters.get('cross_section_variable')
-
-
-	# Read Hofstadter data 
-	with open(sys.path[0] + '/../data/Hofstadter.json', 'r') as json_file:
-	    real = json.load(json_file)
 
 
 	# b vs theta
@@ -94,9 +91,6 @@ def plot(output,card_name):
 		plt.plot(theta_in, dsig_dtheta_Mott, label='Mott')
 	plt.yscale("log")
 
-	# Hoftstadter data: Extract the x and y values from the JSON data
-	hofAngles = [float(entry["x"][0]["value"]) for entry in real["values"]]
-
 
 	# Change axis labels
 	if cross_section_variable == 'cos':
@@ -118,9 +112,51 @@ def plot(output,card_name):
 		plt.ylabel(r'$d\sigma/d\Omega$',fontsize=14)
 		plt.title(r'Distribution of $d\sigma/d\Omega$ as function of the scattering angle',fontsize=16)
 
+	# Read Hofstadter data 
+	if any([hof300, hof400, hof550]):
+		json_file = open(sys.path[0] + '/../data/Hofstadter.json', 'r')
+		real = json.load(json_file)
+
+	# Extract the x values from the JSON data
+	hofAngles = [float(entry["x"][0]["value"]) for entry in real["values"]]
 
 	# Get energy value for labels
 	col_names = [E["value"] for E in real["qualifiers"]['E']]
+
+	if hof25 == 'true':
+		if kinEn != 25e6:
+			print(f"Are you sure you want to plot data with 125 MeV? Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 25 MeV!")
+
+		hof_difCrossSec_25 = []
+		hofAngles25 = []
+		with open(sys.path[0] + '/../data/hoftstadter 25.csv', 'r') as hof25:
+			for line in hof25:
+				angle, value = line.strip().split(';')
+				hofAngles25.append(float(angle))
+				hof_difCrossSec_25.append(float(value))
+
+		# Normalizing data 
+		hofAngles25, hof_difCrossSec_25 = normalize_data(hofAngles25, hof_difCrossSec_25, None, theta_in, difCrossSec_Ruth, cross_section_variable)
+
+		plt.scatter(hofAngles25, hof_difCrossSec_25, label="Hoftstadter 25 Mev") 
+
+	if hof125 == 'true':
+		if kinEn != 125e6:
+			print(f"Are you sure you want to plot data with 125 MeV? Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 125 MeV!")
+		
+		hof_difCrossSec_125 = []
+		hofAngles125 = []
+		with open(sys.path[0] + '/../data/hoftstadter .csv', 'r') as hof125:
+			for line in hof125:
+				angle, value = line.strip().split(';')
+				hofAngles125.append(float(angle))
+				hof_difCrossSec_125.append(float(value))
+
+		# Normalizing data 
+		hofAngles125, hof_difCrossSec_125 = normalize_data(hofAngles125, hof_difCrossSec_125, None, theta_in, difCrossSec_Ruth, cross_section_variable)
+
+		plt.scatter(hofAngles125, hof_difCrossSec_125, marker='s', color='black',  label="Hoftstadter 125 Mev") 
+
 
 	if hof300 == 'true':
 		if kinEn != 300e6:
@@ -158,11 +194,13 @@ def plot(output,card_name):
 
 		plt.errorbar(hofAngles, hof_difCrossSec_550, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[3])
 
-	if hof == True:
+	if any([hof25, hof125, hof300, hof400, hof550]):
 		pltName += '_hoftstadter'
 
+	pltName += f'_{int(kinEn*1e-6)}MeV'
 	plt.legend()
 	plt.savefig(pltName, dpi=300, bbox_inches='tight')
+	print(f'Created {pltName}.png')
 
 
 if __name__ == '__main__':

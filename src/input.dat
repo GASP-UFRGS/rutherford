@@ -1,7 +1,7 @@
 thvsb        	: [proc] Procedure to be done
 
 Input parameters:
-4e6         	: [kinEn] Collision energy (eV)
+400e6         	: [kinEn] Collision energy (eV)
 79          	: [zTarget] Proton number of the target
 2           	: [zProj] Proton number of the projectiles
 degrees     	: [angUnit] Angle unit (radians or degrees)
@@ -11,7 +11,11 @@ true        	: [mott] Compute mott correction (true or false)
 cos         	: [cross_section_variable] variable to calculate differential cross section
 
 Compare with:
-Data from E.E.Chambers and R.Hofstadter, 1956(https://www.hepdata.net/record/ins945003)
-true        	: [hoftstadter300] 
-true        	: [hoftstadter400]  
-true        	: [hoftstadter550] 
+Data from Fregeau, J H, and Hofstadter, 1953, https://doi.org/10.1103/PhysRev.99.1503 (alpha particles on Au foil)
+false      		: [hoftstadter25] 
+false      		: [hoftstadter125]
+
+Data from E.E.Chambers and R.Hofstadter, 1956, https://www.hepdata.net/record/ins945003 (alpha particles on Au foil)
+false      		: [hoftstadter300] 
+true      		: [hoftstadter400] 
+false      		: [hoftstadter550] 
