@@ -18,10 +18,11 @@ zTarget = parameters.get('zTarget')
 zProj = parameters.get('zProj') 
 angUnit = parameters.get('angUnit') 
 angStart = parameters.get('angStart') 
-angEnd = parameters.get('angEnd') 
+angEnd = parameters.get('angEnd')
 mott = parameters.get('mott') 
-recoil = parameters.get('recoil') 
-massTarget = parameters.get('massTarget') 
+recoil = parameters.get('recoil')
+impactParameter = parameters.get('impactParameter') 
+cross_section_variable = parameters.get('difCrossSec')
 
 # Outputs Nuclear mass in atomic mass units (u).
 element = periodictable.elements[zTarget]

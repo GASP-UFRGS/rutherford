@@ -43,8 +43,10 @@ def plot(output,card_name):
 	angUnit = parameters.get('angUnit')
 	mott = parameters.get('mott')
 	recoil = parameters.get('recoil')
+	impactParameter = parameters.get('impactParameter') 
+	cross_section_variable = parameters.get('difCrossSec')
 	hof25 = parameters.get('hoftstadter25') 
-	hof125 = parameters.get('hoftstadter125')
+	hof125 = parameters.get('hoftstadter125') 
 	hof300 = parameters.get('hoftstadter300')
 	hof400 = parameters.get('hoftstadter400')
 	hof550 = parameters.get('hoftstadter550')
@@ -56,10 +58,6 @@ def plot(output,card_name):
 	if mott == "true":
 		dsig_dtheta_Mott = data[:, 3]
 	
-
-	# Either cos, theta or omega. 
-	cross_section_variable = parameters.get('cross_section_variable')
-
 
 	# b vs theta
 	
@@ -85,15 +83,18 @@ def plot(output,card_name):
 
 	# differential cross section vs dtheta/dcos(theta)/domega
 
+	if cross_section_variable == 'cos':
+		theta_in = np.cos(np.radians(theta_in))
+
 	pltName='plot_dsig_'
 	plt.figure(figsize=(8,6), facecolor='w')
-	plt.plot(theta_in, dsig_dtheta, label='Rutherford')
+	plt.plot(theta_in, difCrossSec_Ruth, label='Rutherford')
 
 	if mott == "true":
-		plt.plot(theta_in, dsig_dtheta_Mott, label='Mott')
+		plt.plot(theta_in, difCrossSec_Mott, label='Mott')
 
 	if recoil == "true":
-		plt.plot(theta_in, dsig_dtheta_Recoil, label='Target Recoil')
+		plt.plot(theta_in, difCrossSec_Recoil, label='Target Recoil')
 
 	plt.yscale("log")
 
