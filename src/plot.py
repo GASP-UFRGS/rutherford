@@ -4,6 +4,34 @@ import numpy as np
 import json
 import sys
 
+def normalize_data(dataX, dataY, dataYerr, simulationX, simulationY, cross_section_variable):
+	# Normalizes data according to the first 
+
+	minAngleDif = 180 # Arbitrary high initial value
+
+	if cross_section_variable == 'cos':
+		dataX = np.cos(np.radians(dataX))
+
+	# Search for simulation point with X closest to smallest value of dataX
+	angle_to_find = dataX[0]
+	for i in range(len(simulationX)):
+		angleDif = abs(simulationX[i] - angle_to_find )
+		if angleDif < minAngleDif:
+			minAngleDif = angleDif
+			minIndex = i
+ 
+	closestAngle = simulationY[minIndex]
+
+	normalizationFactor = closestAngle/dataY[0]
+	dataY = [point*normalizationFactor for point in dataY]
+
+	if dataYerr != None:
+		dataYerr = [entry * normalizationFactor for entry in dataYerr]
+
+		return dataX, dataY, dataYerr
+
+	return dataX, dataY
+
 def plot(output,card_name):
 
 	# Read file
@@ -70,15 +98,6 @@ def plot(output,card_name):
 	hofAngles = [float(entry["x"][0]["value"]) for entry in real["values"]]
 
 
-	# Find closest theta to 30 degrees to normalize data 
-	minAngleDif = 180
-	for i in range(len(theta_in)):
-		angleDif = abs(theta_in[i] - 30.0)
-		if angleDif < minAngleDif:
-			minAngleDif = angleDif
-			minIndex = i
-
-
 	# Change axis labels
 	if cross_section_variable == 'cos':
 		pltName += 'dcostheta_vs_costheta'
@@ -104,38 +123,41 @@ def plot(output,card_name):
 	col_names = [E["value"] for E in real["qualifiers"]['E']]
 
 	if hof300 == 'true':
-		if kinEn != 3e6:
-			print('Are you sure you want to plot data with 300MeV? Chosen kinetic energy (kinEn) is not 300Mev!')
-		hof = True
-		dsigdOmega_300 = [float(entry["y"][0]["value"]) for entry in real["values"]]
+		if kinEn != 300e6:
+			print(f"Are you sure you want to plot data with 300 MeV? Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 300 MeV!")
 
-		normalizationFactor = dsig_dtheta[minIndex]/dsigdOmega_300[0]
-		dsigdOmega_300 = [point*normalizationFactor for point in dsigdOmega_300]
+		hof_difCrossSec_300 = [float(entry["y"][0]["value"]) for entry in real["values"]]
+		yerr = [float(entry["y"][2]["errors"][0]["symerror"]) for entry in real["values"]]
 
-		plt.errorbar(hofAngles, dsigdOmega_300, yerr=[float(entry["y"][0]["errors"][0]["symerror"]) for entry in real["values"]], capsize = 3, ls='none', label="Hoftstadter "+col_names[0]) 
-			
-	if hof400 == 'true':
-		if kinEn != 4e6:
-			print('Are you sure you want to plot data with 400MeV? Chosen kinetic energy (kinEn) is not 400Mev!')
-		hof = True
-		dsigdOmega_400 = [float(entry["y"][1]["value"]) for entry in real["values"]]
+		# Normalizing data 
+		hofAngles, hof_difCrossSec_300, yerr = normalize_data(hofAngles, hof_difCrossSec_300, yerr, theta_in, difCrossSec_Ruth, cross_section_variable)
 
-		normalizationFactor = dsig_dtheta[minIndex]/dsigdOmega_400[0]
-		dsigdOmega_400 = [point*normalizationFactor for point in dsigdOmega_400]
-
-		plt.errorbar(hofAngles, dsigdOmega_400, yerr=[float(entry["y"][1]["errors"][0]["symerror"]) for entry in real["values"]],  capsize = 3, ls='none', label="Hoftstadter "+col_names[1])
-
-	if hof550 == 'true':
-		if kinEn != 5.5e6:
-			print('Are you sure you want to plot data with 550MeV? Chosen kinetic energy (kinEn) is not 550Mev!')
-		hof = True
-		dsigdOmega_550 = [float(entry["y"][3]["value"]) for entry in real["values"]]
-
-		normalizationFactor = dsig_dtheta[minIndex]/dsigdOmega_550[0]
-		dsigdOmega_550 = [point*normalizationFactor for point in dsigdOmega_550]
-
-		plt.errorbar(hofAngles, dsigdOmega_550, yerr=[float(entry["y"][3]["errors"][0]["symerror"]) for entry in real["values"]],  capsize = 3, ls='none', label="Hoftstadter "+col_names[3])
+		plt.errorbar(hofAngles, hof_difCrossSec_300, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[0]) 
 		
+	if hof400 == 'true':
+		if kinEn != 400e6:
+			print(f"Are you sure you want to plot data with 400 MeV? Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 400 MeV!")
+
+		hof_difCrossSec_400 = [float(entry["y"][1]["value"]) for entry in real["values"]]
+		yerr = [float(entry["y"][2]["errors"][0]["symerror"]) for entry in real["values"]]
+
+		# Normalizing data 
+		hofAngles, hof_difCrossSec_400, yerr = normalize_data(hofAngles, hof_difCrossSec_400, yerr, theta_in, difCrossSec_Ruth, cross_section_variable)
+
+		plt.errorbar(hofAngles, hof_difCrossSec_400, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[1])
+	
+	if hof550 == 'true':
+		if kinEn != 550e6:
+			print(f"Are you sure you want to plot data with 550 MeV? Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 550 MeV!"))
+
+		hof_difCrossSec_550 = [float(entry["y"][3]["value"]) for entry in real["values"]]
+		yerr = [float(entry["y"][3]["errors"][0]["symerror"]) for entry in real["values"]]
+
+		# Normalizing data
+		hofAngles, hof_difCrossSec_550, yerr = normalize_data(hofAngles, hof_difCrossSec_550, yerr, theta_in, difCrossSec_Ruth, cross_section_variable)
+
+		plt.errorbar(hofAngles, hof_difCrossSec_550, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[3])
+
 	if hof == True:
 		pltName += '_hoftstadter'
 
