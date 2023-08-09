@@ -13,6 +13,5 @@ cos         	: [cross_section_variable] variable to calculate differential cross
 Compare with:
 Data from E.E.Chambers and R.Hofstadter, 1956(https://www.hepdata.net/record/ins945003)
 true        	: [hoftstadter300] 
-true        	: [hoftstadter400] 
-true        	: [hoftstadter500] 
+true        	: [hoftstadter400]  
 true        	: [hoftstadter550] 
