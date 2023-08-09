@@ -42,6 +42,7 @@ def plot(output,card_name):
 	kinEn = parameters.get('kinEn')
 	angUnit = parameters.get('angUnit')
 	mott = parameters.get('mott')
+	recoil = parameters.get('recoil')
 	hof25 = parameters.get('hoftstadter25') 
 	hof125 = parameters.get('hoftstadter125')
 	hof300 = parameters.get('hoftstadter300')
@@ -87,15 +88,19 @@ def plot(output,card_name):
 	pltName='plot_dsig_'
 	plt.figure(figsize=(8,6), facecolor='w')
 	plt.plot(theta_in, dsig_dtheta, label='Rutherford')
+
 	if mott == "true":
 		plt.plot(theta_in, dsig_dtheta_Mott, label='Mott')
+
+	if recoil == "true":
+		plt.plot(theta_in, dsig_dtheta_Recoil, label='Target Recoil')
+
 	plt.yscale("log")
 
 
 	# Change axis labels
 	if cross_section_variable == 'cos':
 		pltName += 'dcostheta_vs_costheta'
-		hofAngles = np.cos(np.radians(hofAngles))
 		plt.xlabel(r'$cos(\theta)$'.format(unit=angUnit),fontsize=14)
 		plt.ylabel(r'$d\sigma/dcos(\theta)$',fontsize=14)
 		plt.title(r'Distribution of $d\sigma/dcos(\theta)$ as function of the scattering angle',fontsize=16)

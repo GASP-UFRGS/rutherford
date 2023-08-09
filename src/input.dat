@@ -8,6 +8,7 @@ degrees     	: [angUnit] Angle unit (radians or degrees)
 30           	: [angStart] Start of angle interval (chosen unit)
 135         	: [angEnd] End of angle interval (chosen unit)
 true        	: [mott] Compute mott correction (true or false)
+true      		: [recoil] Compute target recoil correction (true or false)
 cos         	: [cross_section_variable] variable to calculate differential cross section
 
 Compare with:
