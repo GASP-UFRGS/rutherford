@@ -9,7 +9,6 @@ try:
 except IndexError:
     _raise_missing_card_error()
 
-
 # Constants
 
 parameters = read_card(card_name)
@@ -27,7 +26,6 @@ cross_section_variable = parameters.get('difCrossSec')
 # Outputs Nuclear mass in atomic mass units (u).
 element = periodictable.elements[zTarget]
 massTarget = element.mass
-
 massTarget = massTarget*1.6605402E-27 # Converts mass to kg
 
 
@@ -43,10 +41,6 @@ kinEn = kinEn*e # Converts energy of incoming particles to Joules.
 kconst = 1/(4*pi*epsilon_0)
 fm = 1e15 # conversion factor to femtometer.
 D = (kconst*zProj*zTarget*e**2/kinEn) * fm # Minimum distance between incident particles and target in fm.
-
-
-# Either cos, theta or omega. 
-cross_section_variable = parameters.get('cross_section_variable')
 
 
 # Functions
@@ -105,7 +99,7 @@ def scattering_differential_Recoil(theta, difCrossSec_Mott, kinEn, massTarget):
 
 theta_in = np.linspace(angStart,angEnd,1000)[1:] # Scattering angle input.
 
-# Convert theta to radians if necessary
+# Converts theta to radians if necessary
 if angUnit == 'degrees':
     theta_in = np.radians(theta_in)
 
@@ -117,7 +111,6 @@ if impactParameter == 'true':
 if cross_section_variable in ['cos', 'theta', 'omega']:
 
     difCrossSec_Ruth = scattering_differential_Ruth(theta_in, D, cross_section_variable) #Differential scattering cross section.
-    #difCrossSec_Ruth = scattering_differential_Ruth(theta_in, D) * 1e-31  # Convert to femtobarns
 
     if mott == 'true':
         difCrossSec_Mott = scattering_differential_Mott(theta_in, difCrossSec_Ruth, kinEn, massTarget) # Mott correction cross section.

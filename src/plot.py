@@ -33,10 +33,8 @@ def normalize_data(dataX, dataY, dataYerr, simulationX, simulationY, cross_secti
 
 	return dataX, dataY
 
-def plot(output,card_name):
 
-	# Read file
-	data = np.loadtxt(output, delimiter=",")
+def plot(output,card_name):
 
 	#Read parameter input card 
 	parameters = read_card(card_name)
@@ -56,13 +54,14 @@ def plot(output,card_name):
 	# Read file
 	data = pd.read_csv(output)
 
-	# Save each column in a dictionary with the header as keys
+	# Save each column of output in a dictionary with the header as keys
 	column_lists = {}
 	for column in data.columns:
 	    column_lists[column] = data[column].tolist()
 
+	# Place values on variables
 	theta_in = column_lists['theta']
-	
+
 	if cross_section_variable in ['cos', 'theta', 'omega']:
 		difCrossSec_Ruth = column_lists['difCrossSec_Ruth']
 		if mott == "true":
@@ -70,27 +69,32 @@ def plot(output,card_name):
 		if recoil == "true":
 			difCrossSec_Recoil = column_lists['difCrossSec_Recoil']
 
+	if impactParameter == 'true':
+		b_out = column_lists['b_out']
 
-	# b vs theta
+		# b vs theta
 	
-	plt.figure(figsize=(8,6), facecolor='w')
-	plt.plot(theta_in, b_out)
-	plt.ylabel(r'$b$ [fm]',fontsize=14)
-	plt.xlabel(r'$\theta$ [{unit}]'.format(unit=angUnit),fontsize=14)
-	plt.title('Impact parameter as function of the scattering angle',fontsize=16)
+		plt.figure(figsize=(8,6), facecolor='w')
+		plt.plot(theta_in, b_out)
+		plt.ylabel(r'$b$ [fm]',fontsize=14)
+		plt.xlabel(r'$\theta$ [{unit}]'.format(unit=angUnit),fontsize=14)
+		plt.title('Impact parameter as function of the scattering angle',fontsize=16)
+		pltName = 'plot_b_vs_theta.png'
+		plt.savefig(pltName, dpi=300, bbox_inches='tight')
+		print(f'Created {pltName}')
+	
 
-	plt.savefig('plot_b_vs_theta.png', dpi=300, bbox_inches='tight')
+		# theta vs b
 
+		plt.figure(figsize=(8,6), facecolor='w')
+		plt.plot(b_out, theta_in)
+		plt.ylabel(r'$\theta$ [{unit}]'.format(unit=angUnit),fontsize=14)
+		plt.xlabel(r'$b$ [fm]',fontsize=14)
+		plt.title('Scattering angle as function of the impact parameter',fontsize=16)
+		pltName = 'plot_theta_vs_b.png'
+		plt.savefig(pltName, dpi=300, bbox_inches='tight')
+		print(f'Created {pltName}')
 
-	# theta vs b
-
-	plt.figure(figsize=(8,6), facecolor='w')
-	plt.plot(b_out, theta_in)
-	plt.ylabel(r'$\theta$ [{unit}]'.format(unit=angUnit),fontsize=14)
-	plt.xlabel(r'$b$ [fm]',fontsize=14)
-	plt.title('Scattering angle as function of the impact parameter',fontsize=16)
-
-	plt.savefig('plot_theta_vs_b.png', dpi=300, bbox_inches='tight')
 
 
 	# differential cross section vs dtheta/dcos(theta)/domega
@@ -130,6 +134,7 @@ def plot(output,card_name):
 		plt.ylabel(r'$d\sigma/d\Omega$',fontsize=14)
 		plt.title(r'Distribution of $d\sigma/d\Omega$ as function of the scattering angle',fontsize=16)
 
+
 	# Read Hofstadter data 
 	if any([hof300, hof400, hof550]):
 		json_file = open(sys.path[0] + '/../data/Hofstadter.json', 'r')
@@ -141,13 +146,15 @@ def plot(output,card_name):
 	# Get energy value for labels
 	col_names = [E["value"] for E in real["qualifiers"]['E']]
 
+
+	# Plotting of Hoftstadter data
 	if hof25 == 'true':
 		if kinEn != 25e6:
 			print(f"Are you sure you want to plot data with 125 MeV? Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 25 MeV!")
 
 		hof_difCrossSec_25 = []
 		hofAngles25 = []
-		with open(sys.path[0] + '/../data/hoftstadter 25.csv', 'r') as hof25:
+		with open(sys.path[0] + '/../data/hoftstadter25.csv', 'r') as hof25:
 			for line in hof25:
 				angle, value = line.strip().split(';')
 				hofAngles25.append(float(angle))
@@ -164,7 +171,7 @@ def plot(output,card_name):
 		
 		hof_difCrossSec_125 = []
 		hofAngles125 = []
-		with open(sys.path[0] + '/../data/hoftstadter .csv', 'r') as hof125:
+		with open(sys.path[0] + '/../data/hoftstadter125.csv', 'r') as hof125:
 			for line in hof125:
 				angle, value = line.strip().split(';')
 				hofAngles125.append(float(angle))
@@ -188,6 +195,7 @@ def plot(output,card_name):
 
 		plt.errorbar(hofAngles, hof_difCrossSec_300, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[0]) 
 		
+
 	if hof400 == 'true':
 		if kinEn != 400e6:
 			print(f"Are you sure you want to plot data with 400 MeV? Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 400 MeV!")
@@ -200,9 +208,10 @@ def plot(output,card_name):
 
 		plt.errorbar(hofAngles, hof_difCrossSec_400, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[1])
 	
+
 	if hof550 == 'true':
 		if kinEn != 550e6:
-			print(f"Are you sure you want to plot data with 550 MeV? Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 550 MeV!"))
+			print(f"Are you sure you want to plot data with 550 MeV? Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 550 MeV!")
 
 		hof_difCrossSec_550 = [float(entry["y"][3]["value"]) for entry in real["values"]]
 		yerr = [float(entry["y"][3]["errors"][0]["symerror"]) for entry in real["values"]]
@@ -212,8 +221,10 @@ def plot(output,card_name):
 
 		plt.errorbar(hofAngles, hof_difCrossSec_550, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[3])
 
+
 	if any([hof25, hof125, hof300, hof400, hof550]):
 		pltName += '_hoftstadter'
+
 
 	pltName += f'_{int(kinEn*1e-6)}MeV'
 	plt.legend()
