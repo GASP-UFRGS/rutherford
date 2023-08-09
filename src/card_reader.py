@@ -19,7 +19,7 @@ def _raise_missing_card_error():
 # Dictionary that contains the necessary parameters
 # of each procedure
 procs = {
-    'thvsb': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'angStart', 'angEnd', 'mott', 'recoil', 'impactParameter', 'difCrossSec', 'cross_section_variable', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550')
+    'thvsb': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'angStart', 'angEnd', 'mott', 'recoil', 'impactParameter', 'difCrossSec', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550')
 }
 
 # Empty dictionary that will receive the parameters
@@ -33,7 +33,7 @@ def read_card(file_name):
                 procedure = line.split()[0]
             elif 'parameters:' in line:
                 break
-        
+
         for line in card:
             for parameter in procs[procedure]:
                 if parameter in line:
@@ -42,11 +42,39 @@ def read_card(file_name):
                     except:
                         params[parameter] = line.split()[0]
 
+
+    ####### Tests
     if tuple(params) != procs[procedure]:
         _raise_parameters_error()
+
+    # Test for float 
+    for variable in ['kinEn', 'angStart', 'angEnd']:
+        try:
+            variable = float(params[variable])
+        except ValueError:
+            raise ValueError(f"{params[variable]} is not a valid value for {variable}. It must be a float.")
+
+    # Test for integer
+    for variable in ['zTarget', 'zProj']:
+        try:
+            variable = int(params[variable])
+        except ValueError:
+            raise ValueError(f"{params[variable]} is not a valid value for {variable}. It must be an integer.")
+    
+    # Test for booleans
+    for variable in ['mott', 'recoil', 'impactParameter', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550']:
+        if params[variable] not in ['true', 'false']:
+            raise ValueError(f"{params[variable]} is not a valid value for {variable}. It must be 'true' or 'false'.")
+
+    # Test for valid angle unit
+    if params['angUnit'] not in ['radians', 'degrees']:
+        raise ValueError(f"{params['angUnit']} is not a valid value for angUnit. It must be 'radians' or 'degrees'.")
+
+    # Test for valid choices for difCrossSec
+    if params['difCrossSec'] not in ['theta', 'cos', 'omega', 'none']:
+        raise ValueError(f"{params['difCrossSec']} is not a valid value for difCrossSec. It must be 'theta', 'cos', 'omega', or 'none'.")
 
     return params
 
 if __name__ == '__main__':
     print(read_card('input.dat'))
-
