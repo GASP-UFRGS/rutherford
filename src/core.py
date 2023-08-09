@@ -2,7 +2,7 @@ import numpy as np
 import sys
 import periodictable
 from card_reader import read_card, _raise_missing_card_error 
-from scipy.constants import epsilon_0, pi, e, c
+from scipy.constants import epsilon_0, pi, e, c, alpha, hbar, electron_mass
 
 try:
     card_name = sys.argv[1]
@@ -129,15 +129,27 @@ if cross_section_variable in ['cos', 'theta', 'omega']:
 # Write to file
 
 file_path = "output.dat"
-data = np.column_stack((theta_in, b_out, difCrossSec_Ruth))
 
-if mott == "true":
-    data = np.column_stack((data, difCrossSec_Mott))
+header = 'theta'
+data = np.degrees(theta_in)
 
-if recoil == "true":
-    data = np.column_stack((data, difCrossSec_Recoil))
+if impactParameter == 'true':
+    header += ',b_out'
+    data = np.column_stack((data, b_out))
 
-np.savetxt(file_path, data, delimiter=",")
+if cross_section_variable in ['cos', 'theta', 'omega']:
+    header += ',difCrossSec_Ruth'
+    data = np.column_stack((data, difCrossSec_Ruth))
+
+    if mott == "true":
+        header += ',difCrossSec_Mott'
+        data = np.column_stack((data, difCrossSec_Mott))
+
+    if recoil == "true":
+        header += ',difCrossSec_Recoil'
+        data = np.column_stack((data, difCrossSec_Recoil))
+
+np.savetxt(file_path, data, delimiter=",", header = header, comments="")
 
 
 print("Data has been written to", file_path)

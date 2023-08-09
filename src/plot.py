@@ -1,5 +1,6 @@
 from card_reader import read_card, _raise_missing_card_error 
 import matplotlib.pyplot as plt
+import pandas as pd
 import numpy as np
 import json
 import sys
@@ -52,12 +53,23 @@ def plot(output,card_name):
 	hof550 = parameters.get('hoftstadter550')
 	hof = any([hof25, hof125, hof300, hof400, hof550])
 	
-	theta_in = data[:, 0]  
-	b_out = data[:, 1]
-	dsig_dtheta = data[:, 2]
-	if mott == "true":
-		dsig_dtheta_Mott = data[:, 3]
+	# Read file
+	data = pd.read_csv(output)
+
+	# Save each column in a dictionary with the header as keys
+	column_lists = {}
+	for column in data.columns:
+	    column_lists[column] = data[column].tolist()
+
+	theta_in = column_lists['theta']
 	
+	if cross_section_variable in ['cos', 'theta', 'omega']:
+		difCrossSec_Ruth = column_lists['difCrossSec_Ruth']
+		if mott == "true":
+			difCrossSec_Mott = column_lists['difCrossSec_Mott']
+		if recoil == "true":
+			difCrossSec_Recoil = column_lists['difCrossSec_Recoil']
+
 
 	# b vs theta
 	
