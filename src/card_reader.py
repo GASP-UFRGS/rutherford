@@ -19,7 +19,7 @@ def _raise_missing_card_error():
 # Dictionary that contains the necessary parameters
 # of each procedure
 procs = {
-    'thvsb': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'angStart', 'angEnd', 'mott', 'recoil', 'impactParameter', 'difCrossSec', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550')
+    'thvsb': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'angStart', 'angEnd', 'mott', 'recoil', 'impactParameter', 'difCrossSec', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550', 'GeigerMarsden')
 }
 
 # Empty dictionary that will receive the parameters
@@ -62,7 +62,7 @@ def read_card(file_name):
             raise ValueError(f"{params[variable]} is not a valid value for {variable}. It must be an integer.")
     
     # Test for booleans
-    for variable in ['mott', 'recoil', 'impactParameter', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550']:
+    for variable in ['mott', 'recoil', 'impactParameter', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550', 'GeigerMarsden']:
         if params[variable] not in ['true', 'false']:
             raise ValueError(f"{params[variable]} is not a valid value for {variable}. It must be 'true' or 'false'.")
 

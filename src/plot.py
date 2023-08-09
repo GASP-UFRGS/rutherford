@@ -49,6 +49,7 @@ def plot(output,card_name):
 	hof300 = parameters.get('hoftstadter300')
 	hof400 = parameters.get('hoftstadter400')
 	hof550 = parameters.get('hoftstadter550')
+	geiger = parameters.get('GeigerMarsden')
 	hof = any([hof25, hof125, hof300, hof400, hof550])
 	
 	# Read file
@@ -224,6 +225,24 @@ def plot(output,card_name):
 
 	if any([hof25, hof125, hof300, hof400, hof550]):
 		pltName += '_hoftstadter'
+
+
+	if geiger == 'true':
+
+		geiger_difCrossSec_125 = []
+		geigerAngles125 = []
+		with open(sys.path[0] + '/../data/GeigerMarsden.csv', 'r') as hof125:
+			for line in hof125:
+				angle, value = line.strip().split(';')
+				geigerAngles125.append(float(angle))
+				geiger_difCrossSec_125.append(float(value))
+
+		# Normalizing data 
+		geigerAngles125, geiger_difCrossSec_125 = normalize_data(geigerAngles125, geiger_difCrossSec_125, None, theta_in, difCrossSec_Ruth, cross_section_variable)
+
+		plt.scatter(geigerAngles125, geiger_difCrossSec_125, color='black',  label="GeigerMarsden") 
+
+		pltName += '_GeigerMarsden'
 
 
 	pltName += f'_{int(kinEn*1e-6)}MeV'
