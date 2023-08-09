@@ -29,6 +29,15 @@ massTarget = element.mass
 
 massTarget = massTarget*1.6605402E-27 # Converts mass to kg
 
+
+# If projectile is electron
+if zProj != 0:
+    massProj = periodictable.elements[zProj].mass * 1.6605402E-27
+else:
+    zProj = 1
+    massProj = electron_mass
+
+
 kinEn = kinEn*e # Converts energy of incoming particles to Joules.
 kconst = 1/(4*pi*epsilon_0)
 fm = 1e15 # conversion factor to femtometer.
