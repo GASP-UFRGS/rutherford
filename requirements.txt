@@ -1,10 +1,11 @@
 ###### Requirements without Version Specifiers ######
-scipy
+json
 matplotlib
 numpy
-platform
-sys
+pandas
 periodictable
-json
+platform
+scipy
+sys
 
 ###### Requirements with Version Specifiers ######
