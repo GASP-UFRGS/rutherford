@@ -5,13 +5,10 @@ import numpy as np
 import json
 import sys
 
-def normalize_data(dataX, dataY, dataYerr, simulationX, simulationY, cross_section_variable):
-	# Normalizes data according to the first 
-
+# Normalizes simulation according to the first datapoint 
+def normalize_sim(dataX, dataY, simulationX, simulationY):
+	
 	minAngleDif = 180 # Arbitrary high initial value
-
-	if cross_section_variable == 'cos':
-		dataX = np.cos(np.radians(dataX))
 
 	# Search for simulation point with X closest to smallest value of dataX
 	angle_to_find = dataX[0]
@@ -23,7 +20,21 @@ def normalize_data(dataX, dataY, dataYerr, simulationX, simulationY, cross_secti
  
 	closestAngle = simulationY[minIndex]
 
-	normalizationFactor = closestAngle/dataY[0]
+	normalizationFactor = dataY[0]/closestAngle
+	simulationY = [point*normalizationFactor for point in simulationY]
+
+	return simulationY
+
+
+# Converts data from nanoBarns to cm^2/sterad to match plots from 1957 Hoftstadt paper
+# Converts x axis to cosing if necessary
+def convert_data(dataX, dataY, dataYerr, cross_section_variable):
+
+	if cross_section_variable == 'cos':
+		dataX = np.cos(np.radians(dataX))
+
+	normalizationFactor = 1e-33
+
 	dataY = [point*normalizationFactor for point in dataY]
 
 	if dataYerr != None:
@@ -160,8 +171,12 @@ def plot(output,card_name):
 					hofAngles25.append(float(angle))
 					hof_difCrossSec_25.append(float(value))
 
-			# Normalizing data 
-			hofAngles25, hof_difCrossSec_25 = normalize_data(hofAngles25, hof_difCrossSec_25, None, theta_in, difCrossSec['Rutherford'], cross_section_variable)
+			# Converts data units
+			hofAngles25, hof_difCrossSec_25= convert_data(hofAngles25, hof_difCrossSec_25, None, cross_section_variable)
+
+			# Normalizing simluation
+			for key in difCrossSec:
+				difCrossSec[key] = normalize_sim(hofAngles25, hof_difCrossSec_25, theta_in, difCrossSec[key])
 
 			plt.scatter(hofAngles25, hof_difCrossSec_25, label="Hoftstadter 25 Mev") 
 
@@ -177,9 +192,12 @@ def plot(output,card_name):
 					hofAngles125.append(float(angle))
 					hof_difCrossSec_125.append(float(value))
 
-			# Normalizing data 
-			hofAngles125, hof_difCrossSec_125 = normalize_data(hofAngles125, hof_difCrossSec_125, None, theta_in, difCrossSec['Rutherford'], cross_section_variable)
-
+			hofAngles125, hof_difCrossSec_125= convert_data(hofAngles125, hof_difCrossSec_125, None, cross_section_variable)
+			
+			# Normalizing simluation
+			for key in difCrossSec:
+				difCrossSec[key] = normalize_sim(hofAngles125, hof_difCrossSec_125, theta_in, difCrossSec[key])
+				
 			plt.scatter(hofAngles125, hof_difCrossSec_125, marker='s', color='black',  label="Hoftstadter 125 Mev") 
 
 
@@ -190,8 +208,12 @@ def plot(output,card_name):
 			hof_difCrossSec_300 = [float(entry["y"][0]["value"]) for entry in real["values"]]
 			yerr = [float(entry["y"][2]["errors"][0]["symerror"]) for entry in real["values"]]
 
-			# Normalizing data 
-			hofAngles, hof_difCrossSec_300, yerr = normalize_data(hofAngles, hof_difCrossSec_300, yerr, theta_in, difCrossSec['Rutherford'], cross_section_variable)
+			# Converts data units
+			hofAngles, hof_difCrossSec_300, yerr = convert_data(hofAngles, hof_difCrossSec_300, yerr, cross_section_variable)
+
+			# Normalizing simluation
+			for key in difCrossSec:
+				difCrossSec[key] = normalize_sim(hofAngles, hof_difCrossSec_300, theta_in, difCrossSec[key])
 
 			plt.errorbar(hofAngles, hof_difCrossSec_300, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[0]) 
 		
@@ -203,8 +225,12 @@ def plot(output,card_name):
 			hof_difCrossSec_400 = [float(entry["y"][1]["value"]) for entry in real["values"]]
 			yerr = [float(entry["y"][2]["errors"][0]["symerror"]) for entry in real["values"]]
 
-			# Normalizing data 
-			hofAngles, hof_difCrossSec_400, yerr = normalize_data(hofAngles, hof_difCrossSec_400, yerr, theta_in, difCrossSec['Rutherford'], cross_section_variable)
+			# Convert data units
+			hofAngles, hof_difCrossSec_400, yerr = convert_data(hofAngles, hof_difCrossSec_400, yerr, cross_section_variable)
+
+			# Normalize simluation
+			for key in difCrossSec:
+				difCrossSec[key] = normalize_sim(hofAngles, hof_difCrossSec_400, theta_in, difCrossSec[key])
 
 			plt.errorbar(hofAngles, hof_difCrossSec_400, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[1])
 	
@@ -216,8 +242,12 @@ def plot(output,card_name):
 			hof_difCrossSec_550 = [float(entry["y"][3]["value"]) for entry in real["values"]]
 			yerr = [float(entry["y"][3]["errors"][0]["symerror"]) for entry in real["values"]]
 
-			# Normalizing data
-			hofAngles, hof_difCrossSec_550, yerr = normalize_data(hofAngles, hof_difCrossSec_550, yerr, theta_in, difCrossSec['Rutherford'], cross_section_variable)
+			# Convert data units
+			hofAngles, hof_difCrossSec_500, yerr = convert_data(hofAngles, hof_difCrossSec_500, yerr, cross_section_variable)
+
+			# Normalize simluation
+			for key in difCrossSec:
+				difCrossSec[key] = normalize_sim(hofAngles, hof_difCrossSec_500, theta_in, difCrossSec[key])
 
 			plt.errorbar(hofAngles, hof_difCrossSec_550, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[3])
 
@@ -237,10 +267,14 @@ def plot(output,card_name):
 					angle, value = line.strip().split(';')
 					geigerAngles125.append(float(angle))
 					geiger_difCrossSec_125.append(float(value))
-
-			# Normalizing data 
-			geigerAngles125, geiger_difCrossSec_125 = normalize_data(geigerAngles125, geiger_difCrossSec_125, None, theta_in, difCrossSec['Rutherford'], cross_section_variable)
-
+	
+			# Convert data units
+			geigerAngles125, geiger_difCrossSec_125 = convert_data(geigerAngles125, geiger_difCrossSec_125, None, cross_section_variable)
+			
+			# Normalizing simluation
+			for key in difCrossSec:
+				difCrossSec[key] = normalize_sim(geigerAngles125, geiger_difCrossSec_125, theta_in, difCrossSec[key])
+				
 			plt.scatter(geigerAngles125, geiger_difCrossSec_125, color='black',  label="GeigerMarsden") 
 
 			pltName += '_GeigerMarsden'
