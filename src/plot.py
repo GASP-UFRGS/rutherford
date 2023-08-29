@@ -63,12 +63,14 @@ def plot(output,card_name):
 	# Place values on variables
 	theta_in = column_lists['theta']
 
+	difCrossSec = {}
+
 	if cross_section_variable in ['cos', 'theta', 'omega']:
-		difCrossSec_Ruth = column_lists['difCrossSec_Ruth']
+		difCrossSec['Rutherford'] = column_lists['difCrossSec_Ruth']
 		if mott == "true":
-			difCrossSec_Mott = column_lists['difCrossSec_Mott']
+			difCrossSec['Mott'] = column_lists['difCrossSec_Mott']
 		if recoil == "true":
-			difCrossSec_Recoil = column_lists['difCrossSec_Recoil']
+			difCrossSec['Target Recoil'] = column_lists['difCrossSec_Recoil']
 
 	if impactParameter == 'true':
 		b_out = column_lists['b_out']
@@ -105,14 +107,6 @@ def plot(output,card_name):
 
 	pltName='plot_dsig_'
 	plt.figure(figsize=(8,6), facecolor='w')
-	plt.plot(theta_in, difCrossSec_Ruth, label='Rutherford')
-
-	if mott == "true":
-		plt.plot(theta_in, difCrossSec_Mott, label='Mott')
-
-	if recoil == "true":
-		plt.plot(theta_in, difCrossSec_Recoil, label='Target Recoil')
-
 	plt.yscale("log")
 
 
@@ -140,6 +134,11 @@ def plot(output,card_name):
 	if any([hof300, hof400, hof550]):
 		json_file = open(sys.path[0] + '/../data/Hofstadter.json', 'r')
 		real = json.load(json_file)
+	else:
+		#plot every Differential cross section
+		for key in difCrossSec:
+			plt.plot(theta_in, difCrossSec[key], label=key)
+			
 
 	# Extract the x values from the JSON data
 	hofAngles = [float(entry["x"][0]["value"]) for entry in real["values"]]
@@ -162,7 +161,7 @@ def plot(output,card_name):
 					hof_difCrossSec_25.append(float(value))
 
 			# Normalizing data 
-			hofAngles25, hof_difCrossSec_25 = normalize_data(hofAngles25, hof_difCrossSec_25, None, theta_in, difCrossSec_Ruth, cross_section_variable)
+			hofAngles25, hof_difCrossSec_25 = normalize_data(hofAngles25, hof_difCrossSec_25, None, theta_in, difCrossSec['Rutherford'], cross_section_variable)
 
 			plt.scatter(hofAngles25, hof_difCrossSec_25, label="Hoftstadter 25 Mev") 
 
@@ -179,7 +178,7 @@ def plot(output,card_name):
 					hof_difCrossSec_125.append(float(value))
 
 			# Normalizing data 
-			hofAngles125, hof_difCrossSec_125 = normalize_data(hofAngles125, hof_difCrossSec_125, None, theta_in, difCrossSec_Ruth, cross_section_variable)
+			hofAngles125, hof_difCrossSec_125 = normalize_data(hofAngles125, hof_difCrossSec_125, None, theta_in, difCrossSec['Rutherford'], cross_section_variable)
 
 			plt.scatter(hofAngles125, hof_difCrossSec_125, marker='s', color='black',  label="Hoftstadter 125 Mev") 
 
@@ -192,7 +191,7 @@ def plot(output,card_name):
 			yerr = [float(entry["y"][2]["errors"][0]["symerror"]) for entry in real["values"]]
 
 			# Normalizing data 
-			hofAngles, hof_difCrossSec_300, yerr = normalize_data(hofAngles, hof_difCrossSec_300, yerr, theta_in, difCrossSec_Ruth, cross_section_variable)
+			hofAngles, hof_difCrossSec_300, yerr = normalize_data(hofAngles, hof_difCrossSec_300, yerr, theta_in, difCrossSec['Rutherford'], cross_section_variable)
 
 			plt.errorbar(hofAngles, hof_difCrossSec_300, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[0]) 
 		
@@ -205,7 +204,7 @@ def plot(output,card_name):
 			yerr = [float(entry["y"][2]["errors"][0]["symerror"]) for entry in real["values"]]
 
 			# Normalizing data 
-			hofAngles, hof_difCrossSec_400, yerr = normalize_data(hofAngles, hof_difCrossSec_400, yerr, theta_in, difCrossSec_Ruth, cross_section_variable)
+			hofAngles, hof_difCrossSec_400, yerr = normalize_data(hofAngles, hof_difCrossSec_400, yerr, theta_in, difCrossSec['Rutherford'], cross_section_variable)
 
 			plt.errorbar(hofAngles, hof_difCrossSec_400, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[1])
 	
@@ -218,7 +217,7 @@ def plot(output,card_name):
 			yerr = [float(entry["y"][3]["errors"][0]["symerror"]) for entry in real["values"]]
 
 			# Normalizing data
-			hofAngles, hof_difCrossSec_550, yerr = normalize_data(hofAngles, hof_difCrossSec_550, yerr, theta_in, difCrossSec_Ruth, cross_section_variable)
+			hofAngles, hof_difCrossSec_550, yerr = normalize_data(hofAngles, hof_difCrossSec_550, yerr, theta_in, difCrossSec['Rutherford'], cross_section_variable)
 
 			plt.errorbar(hofAngles, hof_difCrossSec_550, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[3])
 
@@ -240,12 +239,17 @@ def plot(output,card_name):
 					geiger_difCrossSec_125.append(float(value))
 
 			# Normalizing data 
-			geigerAngles125, geiger_difCrossSec_125 = normalize_data(geigerAngles125, geiger_difCrossSec_125, None, theta_in, difCrossSec_Ruth, cross_section_variable)
+			geigerAngles125, geiger_difCrossSec_125 = normalize_data(geigerAngles125, geiger_difCrossSec_125, None, theta_in, difCrossSec['Rutherford'], cross_section_variable)
 
 			plt.scatter(geigerAngles125, geiger_difCrossSec_125, color='black',  label="GeigerMarsden") 
 
 			pltName += '_GeigerMarsden'
 
+
+	# Plot every Differential cross section
+	for key in difCrossSec:
+		plt.plot(theta_in, difCrossSec[key], label=key)
+		
 
 	pltName += f'_{int(kinEn*1e-6)}MeV'
 	plt.legend()
