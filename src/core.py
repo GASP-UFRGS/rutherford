@@ -20,6 +20,7 @@ angStart = parameters.get('angStart')
 angEnd = parameters.get('angEnd')
 mott = parameters.get('mott') 
 recoil = parameters.get('recoil')
+diracProton = parameters.get('diracProton')
 impactParameter = parameters.get('impactParameter') 
 cross_section_variable = parameters.get('difCrossSec')
 
@@ -86,6 +87,8 @@ def scattering_differential_Mott(theta, difCrossSec_Ruth, kinEn, massTarget):
 
     return difCrossSec_Mott 
 
+
+
 def scattering_differential_Recoil(theta, difCrossSec_Mott, kinEn, massTarget):
     """
     Returns differential scattering impact when given the scattering angle.
@@ -93,6 +96,19 @@ def scattering_differential_Recoil(theta, difCrossSec_Mott, kinEn, massTarget):
     difCrossSec_Recoil = difCrossSec_Mott * (1/(1+(((1-np.cos(theta))*kinEn)/(massTarget*c**2))))
 
     return difCrossSec_Recoil
+
+
+
+def scattering_differential_Dirac_Proton(theta, difCrossSec_Recoil, kinEn, massTarget):
+    """
+    Returns differential scattering impact when given the scattering angle.
+    """
+    Q = (2*massTarget*kinEn**2*(1-np.cos(theta)))/(massTarget+kinEn*(1-np.cos(theta)))
+
+    difCrossSec_Dirac_Proton = difCrossSec_Recoil * (1-((Q)/(2*massTarget)*np.tan(theta/2)**2))
+
+    return difCrossSec_Dirac_Proton
+
 
 
 # Calculations
@@ -118,6 +134,8 @@ if cross_section_variable in ['cos', 'theta', 'omega']:
     if recoil == "true":   
          difCrossSec_Recoil = scattering_differential_Recoil(theta_in, difCrossSec_Mott, kinEn, massTarget) # Target recoil correction cross section.
 
+    if diracProton == "true":
+        difCrossSec_diracProton = scattering_differential_Dirac_Proton(theta_in, difCrossSec_Recoil, kinEn, massTarget) # Dirac Proton correction cross section.
 
 # Write to file
 
@@ -141,6 +159,10 @@ if cross_section_variable in ['cos', 'theta', 'omega']:
     if recoil == "true":
         header += ',difCrossSec_Recoil'
         data = np.column_stack((data, difCrossSec_Recoil))
+        
+    if diracProton == "true":
+        header += ',difCrossSec_diracProton'
+        data = np.column_stack((data, difCrossSec_diracProton))
 
 np.savetxt(file_path, data, delimiter=",", header = header, comments="")
 

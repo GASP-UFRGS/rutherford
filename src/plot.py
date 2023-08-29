@@ -53,6 +53,7 @@ def plot(output,card_name):
 	angUnit = parameters.get('angUnit')
 	mott = parameters.get('mott')
 	recoil = parameters.get('recoil')
+	diracProton = parameters.get('diracProton')
 	impactParameter = parameters.get('impactParameter') 
 	cross_section_variable = parameters.get('difCrossSec')
 	hof25 = parameters.get('hoftstadter25') 
@@ -82,6 +83,9 @@ def plot(output,card_name):
 			difCrossSec['Mott'] = column_lists['difCrossSec_Mott']
 		if recoil == "true":
 			difCrossSec['Target Recoil'] = column_lists['difCrossSec_Recoil']
+		if diracProton == "true":
+			print('oi')
+			difCrossSec['Dirac Proton'] = column_lists['difCrossSec_diracProton']
 
 	if impactParameter == 'true':
 		b_out = column_lists['b_out']
@@ -280,7 +284,8 @@ def plot(output,card_name):
 			pltName += '_GeigerMarsden'
 
 
-	# Plot every Differential cross section
+	# Plot every Differential cross section	
+	print(difCrossSec.keys())
 	for key in difCrossSec:
 		plt.plot(theta_in, difCrossSec[key], label=key)
 		

@@ -9,6 +9,7 @@ degrees			: [angUnit] Angle unit (radians or degrees)
 160				: [angEnd] End of angle interval (chosen unit)
 true			: [mott] Compute mott correction (true or false)
 true			: [recoil] Compute target recoil correction (true or false)
+true      		: [diracProton] Compute target recoil correction (true or false)
 
 Calculate:
 true			: [impactParameter] Impact Parameter b
