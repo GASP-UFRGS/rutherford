@@ -151,76 +151,76 @@ def plot(output,card_name):
 	# Plotting of Hoftstadter data
 	if hof25 == 'true':
 		if kinEn != 25e6:
-			print(f"Are you sure you want to plot data with 125 MeV? Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 25 MeV!")
+			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 25 MeV, therefore data was not plotted.")
+		else:
+			hof_difCrossSec_25 = []
+			hofAngles25 = []
+			with open(sys.path[0] + '/../data/hoftstadter25.csv', 'r') as hof25:
+				for line in hof25:
+					angle, value = line.strip().split(';')
+					hofAngles25.append(float(angle))
+					hof_difCrossSec_25.append(float(value))
 
-		hof_difCrossSec_25 = []
-		hofAngles25 = []
-		with open(sys.path[0] + '/../data/hoftstadter25.csv', 'r') as hof25:
-			for line in hof25:
-				angle, value = line.strip().split(';')
-				hofAngles25.append(float(angle))
-				hof_difCrossSec_25.append(float(value))
+			# Normalizing data 
+			hofAngles25, hof_difCrossSec_25 = normalize_data(hofAngles25, hof_difCrossSec_25, None, theta_in, difCrossSec_Ruth, cross_section_variable)
 
-		# Normalizing data 
-		hofAngles25, hof_difCrossSec_25 = normalize_data(hofAngles25, hof_difCrossSec_25, None, theta_in, difCrossSec_Ruth, cross_section_variable)
-
-		plt.scatter(hofAngles25, hof_difCrossSec_25, label="Hoftstadter 25 Mev") 
+			plt.scatter(hofAngles25, hof_difCrossSec_25, label="Hoftstadter 25 Mev") 
 
 	if hof125 == 'true':
 		if kinEn != 125e6:
-			print(f"Are you sure you want to plot data with 125 MeV? Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 125 MeV!")
-		
-		hof_difCrossSec_125 = []
-		hofAngles125 = []
-		with open(sys.path[0] + '/../data/hoftstadter125.csv', 'r') as hof125:
-			for line in hof125:
-				angle, value = line.strip().split(';')
-				hofAngles125.append(float(angle))
-				hof_difCrossSec_125.append(float(value))
+			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 125 MeV, therefore data was not plotted.")
+		else:
+			hof_difCrossSec_125 = []
+			hofAngles125 = []
+			with open(sys.path[0] + '/../data/hoftstadter125.csv', 'r') as hof125:
+				for line in hof125:
+					angle, value = line.strip().split(';')
+					hofAngles125.append(float(angle))
+					hof_difCrossSec_125.append(float(value))
 
-		# Normalizing data 
-		hofAngles125, hof_difCrossSec_125 = normalize_data(hofAngles125, hof_difCrossSec_125, None, theta_in, difCrossSec_Ruth, cross_section_variable)
+			# Normalizing data 
+			hofAngles125, hof_difCrossSec_125 = normalize_data(hofAngles125, hof_difCrossSec_125, None, theta_in, difCrossSec_Ruth, cross_section_variable)
 
-		plt.scatter(hofAngles125, hof_difCrossSec_125, marker='s', color='black',  label="Hoftstadter 125 Mev") 
+			plt.scatter(hofAngles125, hof_difCrossSec_125, marker='s', color='black',  label="Hoftstadter 125 Mev") 
 
 
 	if hof300 == 'true':
 		if kinEn != 300e6:
-			print(f"Are you sure you want to plot data with 300 MeV? Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 300 MeV!")
+			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 300 MeV, therefore data was not plotted.")
+		else:
+			hof_difCrossSec_300 = [float(entry["y"][0]["value"]) for entry in real["values"]]
+			yerr = [float(entry["y"][2]["errors"][0]["symerror"]) for entry in real["values"]]
 
-		hof_difCrossSec_300 = [float(entry["y"][0]["value"]) for entry in real["values"]]
-		yerr = [float(entry["y"][2]["errors"][0]["symerror"]) for entry in real["values"]]
+			# Normalizing data 
+			hofAngles, hof_difCrossSec_300, yerr = normalize_data(hofAngles, hof_difCrossSec_300, yerr, theta_in, difCrossSec_Ruth, cross_section_variable)
 
-		# Normalizing data 
-		hofAngles, hof_difCrossSec_300, yerr = normalize_data(hofAngles, hof_difCrossSec_300, yerr, theta_in, difCrossSec_Ruth, cross_section_variable)
-
-		plt.errorbar(hofAngles, hof_difCrossSec_300, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[0]) 
+			plt.errorbar(hofAngles, hof_difCrossSec_300, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[0]) 
 		
 
 	if hof400 == 'true':
 		if kinEn != 400e6:
-			print(f"Are you sure you want to plot data with 400 MeV? Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 400 MeV!")
+			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 400 MeV, therefore data was not plotted.")
+		else:
+			hof_difCrossSec_400 = [float(entry["y"][1]["value"]) for entry in real["values"]]
+			yerr = [float(entry["y"][2]["errors"][0]["symerror"]) for entry in real["values"]]
 
-		hof_difCrossSec_400 = [float(entry["y"][1]["value"]) for entry in real["values"]]
-		yerr = [float(entry["y"][2]["errors"][0]["symerror"]) for entry in real["values"]]
+			# Normalizing data 
+			hofAngles, hof_difCrossSec_400, yerr = normalize_data(hofAngles, hof_difCrossSec_400, yerr, theta_in, difCrossSec_Ruth, cross_section_variable)
 
-		# Normalizing data 
-		hofAngles, hof_difCrossSec_400, yerr = normalize_data(hofAngles, hof_difCrossSec_400, yerr, theta_in, difCrossSec_Ruth, cross_section_variable)
-
-		plt.errorbar(hofAngles, hof_difCrossSec_400, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[1])
+			plt.errorbar(hofAngles, hof_difCrossSec_400, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[1])
 	
 
 	if hof550 == 'true':
 		if kinEn != 550e6:
-			print(f"Are you sure you want to plot data with 550 MeV? Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 550 MeV!")
+			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 550 MeV!, therefore data was not plotted.")
+		else:
+			hof_difCrossSec_550 = [float(entry["y"][3]["value"]) for entry in real["values"]]
+			yerr = [float(entry["y"][3]["errors"][0]["symerror"]) for entry in real["values"]]
 
-		hof_difCrossSec_550 = [float(entry["y"][3]["value"]) for entry in real["values"]]
-		yerr = [float(entry["y"][3]["errors"][0]["symerror"]) for entry in real["values"]]
+			# Normalizing data
+			hofAngles, hof_difCrossSec_550, yerr = normalize_data(hofAngles, hof_difCrossSec_550, yerr, theta_in, difCrossSec_Ruth, cross_section_variable)
 
-		# Normalizing data
-		hofAngles, hof_difCrossSec_550, yerr = normalize_data(hofAngles, hof_difCrossSec_550, yerr, theta_in, difCrossSec_Ruth, cross_section_variable)
-
-		plt.errorbar(hofAngles, hof_difCrossSec_550, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[3])
+			plt.errorbar(hofAngles, hof_difCrossSec_550, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[3])
 
 
 	if any([hof25, hof125, hof300, hof400, hof550]):
@@ -228,21 +228,23 @@ def plot(output,card_name):
 
 
 	if geiger == 'true':
+		if kinEn != 125e6:
+			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 125 MeV!, therefore data was not plotted.")
+		else:
+			geiger_difCrossSec_125 = []
+			geigerAngles125 = []
+			with open(sys.path[0] + '/../data/GeigerMarsden.csv', 'r') as hof125:
+				for line in hof125:
+					angle, value = line.strip().split(';')
+					geigerAngles125.append(float(angle))
+					geiger_difCrossSec_125.append(float(value))
 
-		geiger_difCrossSec_125 = []
-		geigerAngles125 = []
-		with open(sys.path[0] + '/../data/GeigerMarsden.csv', 'r') as hof125:
-			for line in hof125:
-				angle, value = line.strip().split(';')
-				geigerAngles125.append(float(angle))
-				geiger_difCrossSec_125.append(float(value))
+			# Normalizing data 
+			geigerAngles125, geiger_difCrossSec_125 = normalize_data(geigerAngles125, geiger_difCrossSec_125, None, theta_in, difCrossSec_Ruth, cross_section_variable)
 
-		# Normalizing data 
-		geigerAngles125, geiger_difCrossSec_125 = normalize_data(geigerAngles125, geiger_difCrossSec_125, None, theta_in, difCrossSec_Ruth, cross_section_variable)
+			plt.scatter(geigerAngles125, geiger_difCrossSec_125, color='black',  label="GeigerMarsden") 
 
-		plt.scatter(geigerAngles125, geiger_difCrossSec_125, color='black',  label="GeigerMarsden") 
-
-		pltName += '_GeigerMarsden'
+			pltName += '_GeigerMarsden'
 
 
 	pltName += f'_{int(kinEn*1e-6)}MeV'
