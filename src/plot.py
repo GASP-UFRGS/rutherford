@@ -54,6 +54,7 @@ def plot(output,card_name):
 	mott = parameters.get('mott')
 	recoil = parameters.get('recoil')
 	diracProton = parameters.get('diracProton')
+	formFactor = parameters.get('formFactor')
 	impactParameter = parameters.get('impactParameter') 
 	cross_section_variable = parameters.get('difCrossSec')
 	hof25 = parameters.get('hoftstadter25') 
@@ -63,7 +64,7 @@ def plot(output,card_name):
 	hof550 = parameters.get('hoftstadter550')
 	geiger = parameters.get('GeigerMarsden')
 	hof = any([hof25, hof125, hof300, hof400, hof550])
-	
+
 	# Read file
 	data = pd.read_csv(output)
 
@@ -84,8 +85,9 @@ def plot(output,card_name):
 		if recoil == "true":
 			difCrossSec['Target Recoil'] = column_lists['difCrossSec_Recoil']
 		if diracProton == "true":
-			print('oi')
 			difCrossSec['Dirac Proton'] = column_lists['difCrossSec_diracProton']
+		if formFactor == "true":
+			difCrossSec['Form Factor'] = column_lists['difCrossSec_formFactor']
 
 	if impactParameter == 'true':
 		b_out = column_lists['b_out']
@@ -247,11 +249,11 @@ def plot(output,card_name):
 			yerr = [float(entry["y"][3]["errors"][0]["symerror"]) for entry in real["values"]]
 
 			# Convert data units
-			hofAngles, hof_difCrossSec_500, yerr = convert_data(hofAngles, hof_difCrossSec_500, yerr, cross_section_variable)
+			hofAngles, hof_difCrossSec_550, yerr = convert_data(hofAngles, hof_difCrossSec_550, yerr, cross_section_variable)
 
 			# Normalize simluation
 			for key in difCrossSec:
-				difCrossSec[key] = normalize_sim(hofAngles, hof_difCrossSec_500, theta_in, difCrossSec[key])
+				difCrossSec[key] = normalize_sim(hofAngles, hof_difCrossSec_550, theta_in, difCrossSec[key])
 
 			plt.errorbar(hofAngles, hof_difCrossSec_550, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[3])
 
@@ -285,7 +287,6 @@ def plot(output,card_name):
 
 
 	# Plot every Differential cross section	
-	print(difCrossSec.keys())
 	for key in difCrossSec:
 		plt.plot(theta_in, difCrossSec[key], label=key)
 		
