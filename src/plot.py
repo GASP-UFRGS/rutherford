@@ -62,7 +62,7 @@ def plot(output,card_name):
 	hof300 = parameters.get('hoftstadter300')
 	hof400 = parameters.get('hoftstadter400')
 	hof550 = parameters.get('hoftstadter550')
-	geiger = parameters.get('GeigerMarsden')
+	geiger = parameters.get('geigerMarsden')
 	hof = any([hof25, hof125, hof300, hof400, hof550])
 
 	# Read file

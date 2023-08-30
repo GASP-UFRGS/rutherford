@@ -117,7 +117,7 @@ def scattering_differential_Dirac_Proton(theta, difCrossSec_Recoil, kinEn, massT
 def scattering_differential_Form_Factor(theta, difCrossSec_Recoil, kinEn, massTarget):
 
     # Q = q**2 
-    Q = -(2*(massTarget*5.6175e26)*(kinEn/(e*1e9))**2*(1-np.cos(theta)))/((massTarget*5.6175e26)+(kinEn/(e*1e9))*(1-np.cos(theta))) #Natural units (GeV)^2
+    Q = -(2*(massTarget*5.6175e26)*(kinEn/(e*1e6))**2*(1-np.cos(theta)))/((massTarget*5.6175e26)+((kinEn/(e*1e6))*(1-np.cos(theta)))) #Natural units (MeV)^2
 
     a = 0.71 # Experimental constant 0.71 GeV
     
@@ -125,7 +125,7 @@ def scattering_differential_Form_Factor(theta, difCrossSec_Recoil, kinEn, massTa
 
     magneticMoment = 2.79
 
-    difCrossSec_formFactor = difCrossSec_diracProton * Form_Factor
+    difCrossSec_formFactor = difCrossSec_diracProton * Form_Factor 
 
     Ge = Form_Factor #Electric form factor 
 
