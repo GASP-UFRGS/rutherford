@@ -145,7 +145,7 @@ if angUnit == 'degrees':
     theta_in = np.radians(theta_in)
 
 # Calculates Impact parameter
-if impactParameter == 'true':
+if impactParameter:
     b_out = impact_parameter(theta_in, D) 
 
 # Calculates diferential coss section
