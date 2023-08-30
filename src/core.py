@@ -40,7 +40,7 @@ else:
     massProj = electron_mass
 
 
-kinEn = kinEn*e # Converts energy of incoming particles to Joules.
+kinEn = kinEn*e # Converts energy of incoming particles from eV to Joules.
 kconst = 1/(4*pi*epsilon_0)
 fm = 1e15 # conversion factor to femtometer.
 D = (kconst*zProj*zTarget*e**2/kinEn) * fm # Minimum distance between incident particles and target in fm.
@@ -49,25 +49,22 @@ D = (kconst*zProj*zTarget*e**2/kinEn) * fm # Minimum distance between incident p
 # Functions
 
 def impact_parameter(theta, D):
-    """
-    Returns impact parameter when given the scattering angle.
-    """ 
+    #Returns impact parameter when given the scattering angle.
+    
     return D/(2*np.tan(theta/2))
 
 
 
 def scattering_angle(bparam, D):
-    """
-    Returns scattering angle when given the impact parameter.
-    """
+    # Returns scattering angle when given the impact parameter.
+    
     return 2*np.arctan(D/(2*bparam))
 
 
 
 def scattering_differential_Ruth(theta, D, cross_section_variable):
-    """
-    Returns differential scattering impact when given the scattering angle.
-    """
+    # Returns differential scattering impact when given the scattering angle.
+    
     if cross_section_variable == 'cos':
         difCrossSec_Ruth = (2*pi*D**2/(1-np.cos(theta))**2)
 
@@ -82,9 +79,8 @@ def scattering_differential_Ruth(theta, D, cross_section_variable):
 
 
 def scattering_differential_Mott(theta, difCrossSec_Ruth, kinEn, massTarget):
-    """
-    Returns differential scattering impact when given the scattering angle.
-    """
+    # Applies mott correction factor
+
     difCrossSec_Mott = difCrossSec_Ruth * np.cos(theta/2)**2 
 
     return difCrossSec_Mott 
@@ -92,9 +88,8 @@ def scattering_differential_Mott(theta, difCrossSec_Ruth, kinEn, massTarget):
 
 
 def scattering_differential_Recoil(theta, difCrossSec_Mott, kinEn, massTarget):
-    """
-    Returns differential scattering impact when given the scattering angle.
-    """
+    # Applies Recoil correction factor
+
     difCrossSec_Recoil = difCrossSec_Mott * (1/(1+(((1-np.cos(theta))*kinEn)/(massTarget*c**2))))
 
     return difCrossSec_Recoil
@@ -102,9 +97,8 @@ def scattering_differential_Recoil(theta, difCrossSec_Mott, kinEn, massTarget):
 
 
 def scattering_differential_Dirac_Proton(theta, difCrossSec_Recoil, kinEn, massTarget):
-    """
-    Returns differential scattering impact when given the scattering angle.
-    """
+    # Applies Dirac proton correction factor
+
     # Q = q**2 
     Q = -(2*massTarget*kinEn**2*(1-np.cos(theta)))/(massTarget+kinEn*(1-np.cos(theta)))
 
@@ -115,6 +109,7 @@ def scattering_differential_Dirac_Proton(theta, difCrossSec_Recoil, kinEn, massT
 
 
 def scattering_differential_Form_Factor(theta, difCrossSec_Recoil, kinEn, massTarget):
+    # Applies Form Factor correction factor
 
     # Q = q**2 
     Q = -(2*(massTarget*5.6175e26)*(kinEn/(e*1e6))**2*(1-np.cos(theta)))/((massTarget*5.6175e26)+((kinEn/(e*1e6))*(1-np.cos(theta)))) #Natural units (MeV)^2
@@ -172,7 +167,7 @@ if cross_section_variable in ['cos', 'theta', 'omega']:
         
 
 
-# Write to file
+# Writes to file
 
 file_path = "output.dat"
 

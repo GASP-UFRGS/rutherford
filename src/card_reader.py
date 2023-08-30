@@ -66,6 +66,7 @@ def read_card(file_name):
         if params[variable] not in ['true', 'false']:
             raise ValueError(f"{params[variable]} is not a valid value for {variable}. It must be 'true' or 'false'.")
         else:
+            # Converts tring to boolean
             if params[variable] == 'true':
                 params[variable] = True
             elif params[variable] == 'false':
