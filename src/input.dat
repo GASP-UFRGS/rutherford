@@ -24,7 +24,7 @@ false			: [hoftstadter125]
 Data from E.E.Chambers and R.Hofstadter, 1956, https://www.hepdata.net/record/ins945003
 false			: [hoftstadter300] 
 false			: [hoftstadter400] 
-false			: [hoftstadter550] 
+true			: [hoftstadter550] 
 
 Data from Dr. H. Geiger and E. Marsden, 1913, https://www.chemteam.info/Chem-History/GeigerMarsden-1913/GeigerMarsden-1913.html 
 false			: [GeigerMarsden]
