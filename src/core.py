@@ -104,7 +104,7 @@ if angUnit == 'degrees':
     theta_in = np.radians(theta_in)
 
 # Calculates Impact parameter
-if impactParameter == 'true':
+if impactParameter:
     b_out = impact_parameter(theta_in, D) 
 
 # Calculates diferential coss section
@@ -112,10 +112,10 @@ if cross_section_variable in ['cos', 'theta', 'omega']:
 
     difCrossSec_Ruth = scattering_differential_Ruth(theta_in, D, cross_section_variable) #Differential scattering cross section.
 
-    if mott == 'true':
+    if mott:
         difCrossSec_Mott = scattering_differential_Mott(theta_in, difCrossSec_Ruth, kinEn, massTarget) # Mott correction cross section.
 
-    if recoil == "true":   
+    if recoil:   
          difCrossSec_Recoil = scattering_differential_Recoil(theta_in, difCrossSec_Mott, kinEn, massTarget) # Target recoil correction cross section.
 
 
@@ -126,7 +126,7 @@ file_path = "output.dat"
 header = 'theta'
 data = np.degrees(theta_in)
 
-if impactParameter == 'true':
+if impactParameter:
     header += ',b_out'
     data = np.column_stack((data, b_out))
 
@@ -134,11 +134,11 @@ if cross_section_variable in ['cos', 'theta', 'omega']:
     header += ',difCrossSec_Ruth'
     data = np.column_stack((data, difCrossSec_Ruth))
 
-    if mott == "true":
+    if mott:
         header += ',difCrossSec_Mott'
         data = np.column_stack((data, difCrossSec_Mott))
 
-    if recoil == "true":
+    if recoil:
         header += ',difCrossSec_Recoil'
         data = np.column_stack((data, difCrossSec_Recoil))
 

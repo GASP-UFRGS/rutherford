@@ -78,12 +78,12 @@ def plot(output,card_name):
 
 	if cross_section_variable in ['cos', 'theta', 'omega']:
 		difCrossSec['Rutherford'] = column_lists['difCrossSec_Ruth']
-		if mott == "true":
+		if mott:
 			difCrossSec['Mott'] = column_lists['difCrossSec_Mott']
-		if recoil == "true":
+		if recoil:
 			difCrossSec['Target Recoil'] = column_lists['difCrossSec_Recoil']
 
-	if impactParameter == 'true':
+	if impactParameter:
 		b_out = column_lists['b_out']
 
 		# b vs theta
@@ -145,11 +145,8 @@ def plot(output,card_name):
 	if any([hof300, hof400, hof550]):
 		json_file = open(sys.path[0] + '/../data/Hofstadter.json', 'r')
 		real = json.load(json_file)
-	else:
-		#plot every Differential cross section
-		for key in difCrossSec:
-			plt.plot(theta_in, difCrossSec[key], label=key)
 			
+
 
 	# Extract the x values from the JSON data
 	hofAngles = [float(entry["x"][0]["value"]) for entry in real["values"]]
@@ -159,7 +156,7 @@ def plot(output,card_name):
 
 
 	# Plotting of Hoftstadter data
-	if hof25 == 'true':
+	if hof25:
 		if kinEn != 25e6:
 			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 25 MeV, therefore data was not plotted.")
 		else:
@@ -180,7 +177,7 @@ def plot(output,card_name):
 
 			plt.scatter(hofAngles25, hof_difCrossSec_25, label="Hoftstadter 25 Mev") 
 
-	if hof125 == 'true':
+	if hof125:
 		if kinEn != 125e6:
 			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 125 MeV, therefore data was not plotted.")
 		else:
@@ -201,7 +198,7 @@ def plot(output,card_name):
 			plt.scatter(hofAngles125, hof_difCrossSec_125, marker='s', color='black',  label="Hoftstadter 125 Mev") 
 
 
-	if hof300 == 'true':
+	if hof300:
 		if kinEn != 300e6:
 			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 300 MeV, therefore data was not plotted.")
 		else:
@@ -218,7 +215,7 @@ def plot(output,card_name):
 			plt.errorbar(hofAngles, hof_difCrossSec_300, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[0]) 
 		
 
-	if hof400 == 'true':
+	if hof400:
 		if kinEn != 400e6:
 			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 400 MeV, therefore data was not plotted.")
 		else:
@@ -235,7 +232,7 @@ def plot(output,card_name):
 			plt.errorbar(hofAngles, hof_difCrossSec_400, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[1])
 	
 
-	if hof550 == 'true':
+	if hof550:
 		if kinEn != 550e6:
 			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 550 MeV!, therefore data was not plotted.")
 		else:
@@ -243,11 +240,11 @@ def plot(output,card_name):
 			yerr = [float(entry["y"][3]["errors"][0]["symerror"]) for entry in real["values"]]
 
 			# Convert data units
-			hofAngles, hof_difCrossSec_500, yerr = convert_data(hofAngles, hof_difCrossSec_500, yerr, cross_section_variable)
+			hofAngles, hof_difCrossSec_550, yerr = convert_data(hofAngles, hof_difCrossSec_550, yerr, cross_section_variable)
 
 			# Normalize simluation
 			for key in difCrossSec:
-				difCrossSec[key] = normalize_sim(hofAngles, hof_difCrossSec_500, theta_in, difCrossSec[key])
+				difCrossSec[key] = normalize_sim(hofAngles, hof_difCrossSec_550, theta_in, difCrossSec[key])
 
 			plt.errorbar(hofAngles, hof_difCrossSec_550, yerr, capsize = 3, ls='none', label="Hoftstadter "+col_names[3])
 
@@ -256,7 +253,7 @@ def plot(output,card_name):
 		pltName += '_hoftstadter'
 
 
-	if geiger == 'true':
+	if geiger:
 		if kinEn != 125e6:
 			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 125 MeV!, therefore data was not plotted.")
 		else:

@@ -65,7 +65,12 @@ def read_card(file_name):
     for variable in ['mott', 'recoil', 'impactParameter', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550', 'GeigerMarsden']:
         if params[variable] not in ['true', 'false']:
             raise ValueError(f"{params[variable]} is not a valid value for {variable}. It must be 'true' or 'false'.")
-
+        else:
+            if params[variable] == 'true':
+                params[variable] = True
+            elif params[variable] == 'false':
+                params[variable] = False
+                
     # Test for valid angle unit
     if params['angUnit'] not in ['radians', 'degrees']:
         raise ValueError(f"{params['angUnit']} is not a valid value for angUnit. It must be 'radians' or 'degrees'.")
