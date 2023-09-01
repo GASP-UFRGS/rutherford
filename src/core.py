@@ -28,21 +28,19 @@ cross_section_variable = parameters.get('difCrossSec')
 # Outputs Nuclear mass in atomic mass units (u).
 element = periodictable.elements[zTarget]
 massTarget = element.mass
-massTarget = massTarget*1.6605402E-27 # Converts mass to kg
+massTarget = massTarget * 0.932808457 # Converts mass to GeV
 
 
 # If projectile is electron
 if zProj != 0:
-    massProj = periodictable.elements[zProj].mass * 1.6605402E-27
+    massProj = periodictable.elements[zProj].mass * 0.932808457
 else:
     zProj = 1
     massProj = electron_mass
 
 
-kinEn = kinEn*e # Converts energy of incoming particles to Joules.
-kconst = 1/(4*pi*epsilon_0)
-fm = 1e15 # conversion factor to femtometer.
-D = (kconst*zProj*zTarget*e**2/kinEn) * fm # Minimum distance between incident particles and target in fm.
+kinEn = kinEn*1e9 # Converts energy of incoming particles from eV to GeV.
+D = (zProj*zTarget*alpha/kinEn) # Minimum distance between incident particles and target
 
 
 # Functions
@@ -67,11 +65,11 @@ def scattering_differential_Ruth(theta, D, cross_section_variable):
     if cross_section_variable == 'cos':
         difCrossSec_Ruth = (2*pi*D**2/(1-np.cos(theta))**2)
 
-    if cross_section_variable == 'theta': 
+    if cross_section_variable == 'theta':
         difCrossSec_Ruth = (D**2*pi*np.cos(theta/2)/(4*np.sin(theta/2)**3))
     
-    if cross_section_variable == 'omega':  
-        difCrossSec_Ruth = D**2/(16*np.sin(theta/2)**4)     
+    if cross_section_variable == 'omega':
+        difCrossSec_Ruth = D**2/(16*np.sin(theta/2)**4)
 
     return difCrossSec_Ruth
 
@@ -123,9 +121,8 @@ def scattering_differential_Form_Factor(theta, difCrossSec_Recoil, kinEn, massTa
     # Rosenbluth Formula
     Rosenbluth = (( Ge**2 + Tau*Gm**2 )/(1+Tau) + 2*Tau*Gm**2*np.tan(theta/2)**2)
     difCrossSec_formFactor = difCrossSec_Recoil * Rosenbluth
-    
-    return difCrossSec_formFactor
 
+    return difCrossSec_formFactor
 
 
 
