@@ -19,7 +19,7 @@ def _raise_missing_card_error():
 # Dictionary that contains the necessary parameters
 # of each procedure
 procs = {
-    'thvsb': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'angStart', 'angEnd', 'mott', 'recoil', 'impactParameter', 'difCrossSec', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550', 'GeigerMarsden')
+    'thvsb': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'angStart', 'angEnd', 'mott', 'recoil', 'impactParameter', 'difCrossSec', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550', 'geigerMarsden')
 }
 
 # Empty dictionary that will receive the parameters
@@ -62,10 +62,16 @@ def read_card(file_name):
             raise ValueError(f"{params[variable]} is not a valid value for {variable}. It must be an integer.")
     
     # Test for booleans
-    for variable in ['mott', 'recoil', 'impactParameter', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550', 'GeigerMarsden']:
+    for variable in ['mott', 'recoil', 'impactParameter', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550', 'geigerMarsden']:
         if params[variable] not in ['true', 'false']:
             raise ValueError(f"{params[variable]} is not a valid value for {variable}. It must be 'true' or 'false'.")
-
+        else:
+            # Converts string to boolean
+            if params[variable] == 'true':
+                params[variable] = True
+            elif params[variable] == 'false':
+                params[variable] = False
+                
     # Test for valid angle unit
     if params['angUnit'] not in ['radians', 'degrees']:
         raise ValueError(f"{params['angUnit']} is not a valid value for angUnit. It must be 'radians' or 'degrees'.")

@@ -1,28 +1,28 @@
-thvsb       	: [proc] Procedure to be done
+thvsb           : [proc] Procedure to be done
 
 Input parameters:
-125e6        	: [kinEn] Collision energy (eV)
-79          	: [zTarget] Proton number of the target
-0           	: [zProj] Proton number of the projectiles
-degrees     	: [angUnit] Angle unit (radians or degrees)
-15    			: [angStart] Start of angle interval (chosen unit)
-160         	: [angEnd] End of angle interval (chosen unit)
-true      		: [mott] Compute mott correction (true or false)
-true      		: [recoil] Compute target recoil correction (true or false)
+550e6           : [kinEn] Collision energy (eV)
+79              : [zTarget] Proton number of the target
+0               : [zProj] Proton number of the projectiles
+degrees         : [angUnit] Angle unit (radians or degrees)
+30              : [angStart] Start of angle interval (chosen unit)
+160             : [angEnd] End of angle interval (chosen unit)
+true            : [mott] Compute mott correction
+true            : [recoil] Compute target recoil correction
 
 Calculate:
-true      		: [impactParameter] Impact Parameter b
-cos      		: [difCrossSec] Differential Cross Section in relation to either theta, cos(theta) or the solid angle (theta, cos, omega or none)
+true            : [impactParameter] Impact Parameter b
+omega           : [difCrossSec] Differential Cross Section in relation to either theta, cos(theta) or the solid angle (theta, cos, omega or none)
 
 Compare with:
 Data from Fregeau, J H, and Hofstadter, 1953, https://doi.org/10.1103/PhysRev.99.1503
-false      		: [hoftstadter25] 
-false      		: [hoftstadter125]
+false           : [hoftstadter25] 
+false           : [hoftstadter125]
 
 Data from E.E.Chambers and R.Hofstadter, 1956, https://www.hepdata.net/record/ins945003
-false      		: [hoftstadter300] 
-false      		: [hoftstadter400] 
-false      		: [hoftstadter550] 
+false           : [hoftstadter300] 
+false           : [hoftstadter400] 
+true            : [hoftstadter550] 
 
 Data from Dr. H. Geiger and E. Marsden, 1913, https://www.chemteam.info/Chem-History/GeigerMarsden-1913/GeigerMarsden-1913.html 
-true      		: [GeigerMarsden]
+false           : [geigerMarsden]
