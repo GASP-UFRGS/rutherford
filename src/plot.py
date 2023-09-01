@@ -60,7 +60,7 @@ def plot(output,card_name):
 	hof300 = parameters.get('hoftstadter300')
 	hof400 = parameters.get('hoftstadter400')
 	hof550 = parameters.get('hoftstadter550')
-	geiger = parameters.get('GeigerMarsden')
+	geiger = parameters.get('geigerMarsden')
 	hof = any([hof25, hof125, hof300, hof400, hof550])
 	
 	# Read file
@@ -146,13 +146,11 @@ def plot(output,card_name):
 		json_file = open(sys.path[0] + '/../data/Hofstadter.json', 'r')
 		real = json.load(json_file)
 			
+		# Extract the x values from the JSON data
+		hofAngles = [float(entry["x"][0]["value"]) for entry in real["values"]]
 
-
-	# Extract the x values from the JSON data
-	hofAngles = [float(entry["x"][0]["value"]) for entry in real["values"]]
-
-	# Get energy value for labels
-	col_names = [E["value"] for E in real["qualifiers"]['E']]
+		# Get energy value for labels
+		col_names = [E["value"] for E in real["qualifiers"]['E']]
 
 
 	# Plotting of Hoftstadter data
