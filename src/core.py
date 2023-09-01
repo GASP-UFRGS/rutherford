@@ -20,27 +20,28 @@ angStart = parameters.get('angStart')
 angEnd = parameters.get('angEnd')
 mott = parameters.get('mott') 
 recoil = parameters.get('recoil')
+diracProton = parameters.get('diracProton')
+formFactor = parameters.get('formFactor')
+rosenbluth = parameters.get('rosenbluth')
 impactParameter = parameters.get('impactParameter') 
 cross_section_variable = parameters.get('difCrossSec')
 
 # Outputs Nuclear mass in atomic mass units (u).
 element = periodictable.elements[zTarget]
 massTarget = element.mass
-massTarget = massTarget*1.6605402E-27 # Converts mass to kg
+massTarget = massTarget * 0.932808457 # Converts mass to GeV
 
 
 # If projectile is electron
 if zProj != 0:
-    massProj = periodictable.elements[zProj].mass * 1.6605402E-27
+    massProj = periodictable.elements[zProj].mass * 0.932808457
 else:
     zProj = 1
     massProj = electron_mass
 
 
-kinEn = kinEn*e # Converts energy of incoming particles to Joules.
-kconst = 1/(4*pi*epsilon_0)
-fm = 1e15 # conversion factor to femtometer.
-D = (kconst*zProj*zTarget*e**2/kinEn) * fm # Minimum distance between incident particles and target in fm.
+kinEn = kinEn*1e9 # Converts energy of incoming particles from eV to GeV.
+D = (zProj*zTarget*alpha/kinEn) # Minimum distance between incident particles and target
 
 
 # Functions
@@ -65,11 +66,11 @@ def scattering_differential_Ruth(theta, D, cross_section_variable):
     if cross_section_variable == 'cos':
         difCrossSec_Ruth = (2*pi*D**2/(1-np.cos(theta))**2)
 
-    if cross_section_variable == 'theta': 
+    if cross_section_variable == 'theta':
         difCrossSec_Ruth = (D**2*pi*np.cos(theta/2)/(4*np.sin(theta/2)**3))
     
-    if cross_section_variable == 'omega':  
-        difCrossSec_Ruth = D**2/(16*np.sin(theta/2)**4)     
+    if cross_section_variable == 'omega':
+        difCrossSec_Ruth = D**2/(16*np.sin(theta/2)**4)
 
     return difCrossSec_Ruth
 
@@ -88,6 +89,57 @@ def scattering_differential_Recoil(theta, difCrossSec_Mott, kinEn, massTarget):
     difCrossSec_Recoil = difCrossSec_Mott * (1/(1+(((1-np.cos(theta))*kinEn)/(massTarget*c**2))))
 
     return difCrossSec_Recoil
+
+
+
+def scattering_differential_Dirac_Proton(theta, difCrossSec_Recoil, kinEn, massTarget):
+    # Applies Dirac proton correction factor
+
+    # Q = q**2 
+    Q = -(2*massTarget*kinEn**2*(1-np.cos(theta)))/(massTarget+kinEn*(1-np.cos(theta)))
+    
+    difCrossSec_diracProton = difCrossSec_Recoil * (1-((Q)/(2*massTarget)*np.tan(theta/2)**2))
+
+    return difCrossSec_diracProton 
+
+
+
+def scattering_differential_Form_Factor(theta, difCrossSec_Recoil, kinEn, massTarget):
+    # Applies Form Factor correction factor
+
+    # Q = q**2
+    Q = -(2*massTarget*kinEn**2*(1-np.cos(theta)))/(massTarget+kinEn*(1-np.cos(theta))) 
+    a = 0.71 # Experimental constant 0.71 GeV 
+
+    Form_Factor = ( 1 / (1+(Q/a)) )**2 # dipole
+ 
+    difCrossSec_formFactor = difCrossSec_Recoil * Form_Factor
+
+    return difCrossSec_formFactor
+
+
+
+def scattering_differential_Rosenbluth(theta, difCrossSec_Recoil, kinEn, massTarget):
+    # Applies Form Factor correction factor
+
+    # Q = q**2
+    Q = -(2*massTarget*kinEn**2*(1-np.cos(theta)))/(massTarget+kinEn*(1-np.cos(theta))) 
+    a = 0.71 # Experimental constant 0.71 GeV 
+
+    Form_Factor = ( 1 / (1+(Q/a)) )**2 # dipole
+    magneticMoment = 2.79
+    Ge = Form_Factor #Electric form factor 
+    Gm = magneticMoment * Form_Factor # Magnetic form factor
+    
+    # Lorentz Invariant quantity
+    Tau = -Q/(4*massTarget**2)
+
+    # Rosenbluth Formula
+    Rosenbluth = (( Ge**2 + Tau*Gm**2 )/(1+Tau) + 2*Tau*Gm**2*np.tan(theta/2)**2)
+    difCrossSec_Rosenbluth = difCrossSec_Recoil * Rosenbluth
+
+    return difCrossSec_Rosenbluth
+
 
 
 # Calculations
@@ -113,6 +165,14 @@ if cross_section_variable in ['cos', 'theta', 'omega']:
     if recoil:   
          difCrossSec_Recoil = scattering_differential_Recoil(theta_in, difCrossSec_Mott, kinEn, massTarget) # Target recoil correction cross section.
 
+    if diracProton:
+        difCrossSec_diracProton = scattering_differential_Dirac_Proton(theta_in, difCrossSec_Recoil, kinEn, massTarget) # Dirac Proton correction cross section.
+
+    if formFactor:
+        difCrossSec_formFactor = scattering_differential_Form_Factor(theta_in, difCrossSec_Recoil, kinEn, massTarget) # Form Factor correction cross section.
+        
+    if rosenbluth:
+        difCrossSec_rosenbluth = scattering_differential_Rosenbluth(theta_in, difCrossSec_Recoil, kinEn, massTarget) # Rosenbluth correction cross section.
 
 # Write to file
 
@@ -136,6 +196,20 @@ if cross_section_variable in ['cos', 'theta', 'omega']:
     if recoil:
         header += ',difCrossSec_Recoil'
         data = np.column_stack((data, difCrossSec_Recoil))
+
+    if diracProton:
+        header += ',difCrossSec_diracProton'
+        data = np.column_stack((data, difCrossSec_diracProton))
+        
+    if formFactor:
+        header += ',difCrossSec_formFactor'
+        data = np.column_stack((data, difCrossSec_formFactor))
+        
+    if rosenbluth:
+        header += ',difCrossSec_rosenbluth'
+        data = np.column_stack((data, difCrossSec_rosenbluth))
+        
+
 
 np.savetxt(file_path, data, delimiter=",", header = header, comments="")
 
