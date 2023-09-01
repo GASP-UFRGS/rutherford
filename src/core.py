@@ -20,6 +20,8 @@ angStart = parameters.get('angStart')
 angEnd = parameters.get('angEnd')
 mott = parameters.get('mott') 
 recoil = parameters.get('recoil')
+diracProton = parameters.get('diracProton')
+formFactor = parameters.get('formFactor')
 impactParameter = parameters.get('impactParameter') 
 cross_section_variable = parameters.get('difCrossSec')
 
@@ -90,6 +92,43 @@ def scattering_differential_Recoil(theta, difCrossSec_Mott, kinEn, massTarget):
     return difCrossSec_Recoil
 
 
+
+def scattering_differential_Dirac_Proton(theta, difCrossSec_Recoil, kinEn, massTarget):
+    # Applies Dirac proton correction factor
+
+    # Q = q**2 
+    Q = -(2*massTarget*kinEn**2*(1-np.cos(theta)))/(massTarget+kinEn*(1-np.cos(theta)))
+    
+    difCrossSec_diracProton = difCrossSec_Recoil * (1-((Q)/(2*massTarget)*np.tan(theta/2)**2))
+
+    return difCrossSec_diracProton 
+
+
+
+def scattering_differential_Form_Factor(theta, difCrossSec_Recoil, kinEn, massTarget):
+    # Applies Form Factor correction factor
+
+    # Q = q**2
+    Q = -(2*massTarget*kinEn**2*(1-np.cos(theta)))/(massTarget+kinEn*(1-np.cos(theta))) 
+    a = 0.71 # Experimental constant 0.71 GeV 
+
+    Form_Factor = ( 1 / (1+(Q/a)) )**2 # dipole
+    magneticMoment = 2.79
+    Ge = Form_Factor #Electric form factor 
+    Gm = magneticMoment * Form_Factor # Magnetic form factor
+    
+    # Lorentz Invariant quantity
+    Tau = -Q/(4*massTarget**2)
+
+    # Rosenbluth Formula
+    Rosenbluth = (( Ge**2 + Tau*Gm**2 )/(1+Tau) + 2*Tau*Gm**2*np.tan(theta/2)**2)
+    difCrossSec_formFactor = difCrossSec_Recoil * Rosenbluth
+    
+    return difCrossSec_formFactor
+
+
+
+
 # Calculations
 
 theta_in = np.linspace(angStart,angEnd,1000)[1:] # Scattering angle input.
@@ -112,6 +151,13 @@ if cross_section_variable in ['cos', 'theta', 'omega']:
 
     if recoil:   
          difCrossSec_Recoil = scattering_differential_Recoil(theta_in, difCrossSec_Mott, kinEn, massTarget) # Target recoil correction cross section.
+
+    if diracProton:
+        difCrossSec_diracProton = scattering_differential_Dirac_Proton(theta_in, difCrossSec_Recoil, kinEn, massTarget) # Dirac Proton correction cross section.
+
+    if formFactor:
+        difCrossSec_formFactor = scattering_differential_Form_Factor(theta_in, difCrossSec_Recoil, kinEn, massTarget) # Form Factor correction cross section.
+        
 
 
 # Write to file
@@ -136,6 +182,16 @@ if cross_section_variable in ['cos', 'theta', 'omega']:
     if recoil:
         header += ',difCrossSec_Recoil'
         data = np.column_stack((data, difCrossSec_Recoil))
+
+    if diracProton:
+        header += ',difCrossSec_diracProton'
+        data = np.column_stack((data, difCrossSec_diracProton))
+        
+    if formFactor:
+        header += ',difCrossSec_formFactor'
+        data = np.column_stack((data, difCrossSec_formFactor))
+        
+
 
 np.savetxt(file_path, data, delimiter=",", header = header, comments="")
 

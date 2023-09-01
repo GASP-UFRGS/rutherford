@@ -9,6 +9,8 @@ degrees         : [angUnit] Angle unit (radians or degrees)
 160             : [angEnd] End of angle interval (chosen unit)
 true            : [mott] Compute mott correction
 true            : [recoil] Compute target recoil correction
+true            : [diracProton] Compute Dirac Proton correction
+true            : [formFactor] Compute Form Factor  correction
 
 Calculate:
 true            : [impactParameter] Impact Parameter b

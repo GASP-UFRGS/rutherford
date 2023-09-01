@@ -27,9 +27,9 @@ def normalize_sim(dataX, dataY, simulationX, simulationY):
 
 
 # Converts data from nanoBarns to cm^2/sterad to match plots from 1957 Hoftstadt paper
-# Converts x axis to cosing if necessary
+# Converts x axis to cosine if necessary
 def convert_data(dataX, dataY, dataYerr, cross_section_variable):
-
+	
 	if cross_section_variable == 'cos':
 		dataX = np.cos(np.radians(dataX))
 
@@ -53,6 +53,8 @@ def plot(output,card_name):
 	angUnit = parameters.get('angUnit')
 	mott = parameters.get('mott')
 	recoil = parameters.get('recoil')
+	diracProton = parameters.get('diracProton')
+	formFactor = parameters.get('formFactor')
 	impactParameter = parameters.get('impactParameter') 
 	cross_section_variable = parameters.get('difCrossSec')
 	hof25 = parameters.get('hoftstadter25') 
@@ -74,6 +76,7 @@ def plot(output,card_name):
 	# Place values on variables
 	theta_in = column_lists['theta']
 
+	# Place values on dictionary for each DifCrossSec type
 	difCrossSec = {}
 
 	if cross_section_variable in ['cos', 'theta', 'omega']:
@@ -82,6 +85,11 @@ def plot(output,card_name):
 			difCrossSec['Mott'] = column_lists['difCrossSec_Mott']
 		if recoil:
 			difCrossSec['Target Recoil'] = column_lists['difCrossSec_Recoil']
+		if diracProton:
+			difCrossSec['Dirac Proton'] = column_lists['difCrossSec_diracProton']
+		if formFactor:
+			difCrossSec['Form Factor'] = column_lists['difCrossSec_formFactor']
+			
 
 	if impactParameter:
 		b_out = column_lists['b_out']
@@ -158,6 +166,7 @@ def plot(output,card_name):
 		if kinEn != 25e6:
 			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 25 MeV, therefore data was not plotted.")
 		else:
+			# Gets values from file
 			hof_difCrossSec_25 = []
 			hofAngles25 = []
 			with open(sys.path[0] + '/../data/hoftstadter25.csv', 'r') as hof25:
@@ -169,7 +178,7 @@ def plot(output,card_name):
 			# Converts data units
 			hofAngles25, hof_difCrossSec_25= convert_data(hofAngles25, hof_difCrossSec_25, None, cross_section_variable)
 
-			# Normalizing simluation
+			# Normalizes simluation
 			for key in difCrossSec:
 				difCrossSec[key] = normalize_sim(hofAngles25, hof_difCrossSec_25, theta_in, difCrossSec[key])
 
@@ -179,6 +188,7 @@ def plot(output,card_name):
 		if kinEn != 125e6:
 			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 125 MeV, therefore data was not plotted.")
 		else:
+			# Gets values from file
 			hof_difCrossSec_125 = []
 			hofAngles125 = []
 			with open(sys.path[0] + '/../data/hoftstadter125.csv', 'r') as hof125:
@@ -186,10 +196,11 @@ def plot(output,card_name):
 					angle, value = line.strip().split(';')
 					hofAngles125.append(float(angle))
 					hof_difCrossSec_125.append(float(value))
-
+			
+			# Converts data units
 			hofAngles125, hof_difCrossSec_125= convert_data(hofAngles125, hof_difCrossSec_125, None, cross_section_variable)
 			
-			# Normalizing simluation
+			# Normalizes simluation
 			for key in difCrossSec:
 				difCrossSec[key] = normalize_sim(hofAngles125, hof_difCrossSec_125, theta_in, difCrossSec[key])
 				
@@ -200,13 +211,14 @@ def plot(output,card_name):
 		if kinEn != 300e6:
 			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 300 MeV, therefore data was not plotted.")
 		else:
+			# Gets values from json
 			hof_difCrossSec_300 = [float(entry["y"][0]["value"]) for entry in real["values"]]
 			yerr = [float(entry["y"][2]["errors"][0]["symerror"]) for entry in real["values"]]
 
 			# Converts data units
 			hofAngles, hof_difCrossSec_300, yerr = convert_data(hofAngles, hof_difCrossSec_300, yerr, cross_section_variable)
 
-			# Normalizing simluation
+			# Normalizes simluation
 			for key in difCrossSec:
 				difCrossSec[key] = normalize_sim(hofAngles, hof_difCrossSec_300, theta_in, difCrossSec[key])
 
@@ -217,13 +229,14 @@ def plot(output,card_name):
 		if kinEn != 400e6:
 			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 400 MeV, therefore data was not plotted.")
 		else:
+			# Gets values from json
 			hof_difCrossSec_400 = [float(entry["y"][1]["value"]) for entry in real["values"]]
 			yerr = [float(entry["y"][2]["errors"][0]["symerror"]) for entry in real["values"]]
 
-			# Convert data units
+			# Converts data units
 			hofAngles, hof_difCrossSec_400, yerr = convert_data(hofAngles, hof_difCrossSec_400, yerr, cross_section_variable)
 
-			# Normalize simluation
+			# Normalizes simluation
 			for key in difCrossSec:
 				difCrossSec[key] = normalize_sim(hofAngles, hof_difCrossSec_400, theta_in, difCrossSec[key])
 
@@ -234,13 +247,14 @@ def plot(output,card_name):
 		if kinEn != 550e6:
 			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 550 MeV!, therefore data was not plotted.")
 		else:
+			# Gets values from json
 			hof_difCrossSec_550 = [float(entry["y"][3]["value"]) for entry in real["values"]]
 			yerr = [float(entry["y"][3]["errors"][0]["symerror"]) for entry in real["values"]]
 
-			# Convert data units
+			# Converts data units
 			hofAngles, hof_difCrossSec_550, yerr = convert_data(hofAngles, hof_difCrossSec_550, yerr, cross_section_variable)
 
-			# Normalize simluation
+			# Normalizes simluation
 			for key in difCrossSec:
 				difCrossSec[key] = normalize_sim(hofAngles, hof_difCrossSec_550, theta_in, difCrossSec[key])
 
@@ -255,6 +269,7 @@ def plot(output,card_name):
 		if kinEn != 125e6:
 			print(f"Chosen kinetic energy {int(kinEn*1e-6)}MeV is not 125 MeV!, therefore data was not plotted.")
 		else:
+			# Gets values from file
 			geiger_difCrossSec_125 = []
 			geigerAngles125 = []
 			with open(sys.path[0] + '/../data/GeigerMarsden.csv', 'r') as hof125:
@@ -263,10 +278,10 @@ def plot(output,card_name):
 					geigerAngles125.append(float(angle))
 					geiger_difCrossSec_125.append(float(value))
 	
-			# Convert data units
+			# Converts data units
 			geigerAngles125, geiger_difCrossSec_125 = convert_data(geigerAngles125, geiger_difCrossSec_125, None, cross_section_variable)
 			
-			# Normalizing simluation
+			# Normalizes simluation
 			for key in difCrossSec:
 				difCrossSec[key] = normalize_sim(geigerAngles125, geiger_difCrossSec_125, theta_in, difCrossSec[key])
 				
@@ -275,11 +290,11 @@ def plot(output,card_name):
 			pltName += '_GeigerMarsden'
 
 
-	# Plot every Differential cross section
+	# Plots every Differential cross section
 	for key in difCrossSec:
 		plt.plot(theta_in, difCrossSec[key], label=key)
 		
-
+	# Finalizes plot
 	pltName += f'_{int(kinEn*1e-6)}MeV'
 	plt.legend()
 	plt.savefig(pltName, dpi=300, bbox_inches='tight')
