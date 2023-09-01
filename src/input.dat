@@ -11,6 +11,7 @@ true            : [mott] Compute mott correction
 true            : [recoil] Compute target recoil correction
 true            : [diracProton] Compute Dirac Proton correction
 true            : [formFactor] Compute Form Factor  correction
+true            : [rosenbluth] Compute Rosenbluth  correction
 
 Calculate:
 true            : [impactParameter] Impact Parameter b

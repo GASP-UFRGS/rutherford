@@ -55,6 +55,7 @@ def plot(output,card_name):
 	recoil = parameters.get('recoil')
 	diracProton = parameters.get('diracProton')
 	formFactor = parameters.get('formFactor')
+	rosenbluth = parameters.get('rosenbluth')
 	impactParameter = parameters.get('impactParameter') 
 	cross_section_variable = parameters.get('difCrossSec')
 	hof25 = parameters.get('hoftstadter25') 
@@ -89,8 +90,9 @@ def plot(output,card_name):
 			difCrossSec['Dirac Proton'] = column_lists['difCrossSec_diracProton']
 		if formFactor:
 			difCrossSec['Form Factor'] = column_lists['difCrossSec_formFactor']
+		if rosenbluth:
+			difCrossSec['Rosenbluth'] = column_lists['difCrossSec_rosenbluth']
 			
-
 	if impactParameter:
 		b_out = column_lists['b_out']
 

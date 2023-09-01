@@ -22,6 +22,7 @@ mott = parameters.get('mott')
 recoil = parameters.get('recoil')
 diracProton = parameters.get('diracProton')
 formFactor = parameters.get('formFactor')
+rosenbluth = parameters.get('rosenbluth')
 impactParameter = parameters.get('impactParameter') 
 cross_section_variable = parameters.get('difCrossSec')
 
@@ -111,6 +112,21 @@ def scattering_differential_Form_Factor(theta, difCrossSec_Recoil, kinEn, massTa
     a = 0.71 # Experimental constant 0.71 GeV 
 
     Form_Factor = ( 1 / (1+(Q/a)) )**2 # dipole
+ 
+    difCrossSec_formFactor = difCrossSec_Recoil * Form_Factor
+
+    return difCrossSec_formFactor
+
+
+
+def scattering_differential_Rosenbluth(theta, difCrossSec_Recoil, kinEn, massTarget):
+    # Applies Form Factor correction factor
+
+    # Q = q**2
+    Q = -(2*massTarget*kinEn**2*(1-np.cos(theta)))/(massTarget+kinEn*(1-np.cos(theta))) 
+    a = 0.71 # Experimental constant 0.71 GeV 
+
+    Form_Factor = ( 1 / (1+(Q/a)) )**2 # dipole
     magneticMoment = 2.79
     Ge = Form_Factor #Electric form factor 
     Gm = magneticMoment * Form_Factor # Magnetic form factor
@@ -120,9 +136,9 @@ def scattering_differential_Form_Factor(theta, difCrossSec_Recoil, kinEn, massTa
 
     # Rosenbluth Formula
     Rosenbluth = (( Ge**2 + Tau*Gm**2 )/(1+Tau) + 2*Tau*Gm**2*np.tan(theta/2)**2)
-    difCrossSec_formFactor = difCrossSec_Recoil * Rosenbluth
+    difCrossSec_Rosenbluth = difCrossSec_Recoil * Rosenbluth
 
-    return difCrossSec_formFactor
+    return difCrossSec_Rosenbluth
 
 
 
@@ -155,7 +171,8 @@ if cross_section_variable in ['cos', 'theta', 'omega']:
     if formFactor:
         difCrossSec_formFactor = scattering_differential_Form_Factor(theta_in, difCrossSec_Recoil, kinEn, massTarget) # Form Factor correction cross section.
         
-
+    if rosenbluth:
+        difCrossSec_rosenbluth = scattering_differential_Rosenbluth(theta_in, difCrossSec_Recoil, kinEn, massTarget) # Rosenbluth correction cross section.
 
 # Write to file
 
@@ -187,6 +204,10 @@ if cross_section_variable in ['cos', 'theta', 'omega']:
     if formFactor:
         header += ',difCrossSec_formFactor'
         data = np.column_stack((data, difCrossSec_formFactor))
+        
+    if rosenbluth:
+        header += ',difCrossSec_rosenbluth'
+        data = np.column_stack((data, difCrossSec_rosenbluth))
         
 
 
