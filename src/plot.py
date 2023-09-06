@@ -47,7 +47,7 @@ def convert_data(dataX, dataY, dataYerr, cross_section_variable):
 
 def plot(output,card_name):
 
-	#Read parameter input card 
+	# Read parameter input card 
 	parameters = read_card(card_name)
 	procedure = parameters.get('proc')
 	kinEn = parameters.get('kinEn')

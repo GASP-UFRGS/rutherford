@@ -17,8 +17,7 @@ def _raise_missing_card_error():
         raise CardError("Missing input card. Try running like "
                         "'python core.py input.dat'") from None
 
-# Dictionary that contains the necessary parameters
-# of each procedure
+# Dictionary that contains the necessary parameters of each procedure
 procs = {
     'thvsb': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'angStart', 'angEnd'),
     'xsec': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'angStart', 'angEnd', 'mott', 'recoil', 'diracProton', 'formFactor', 'rosenbluth', 'CrossSecVariable', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550', 'geigerMarsden'),
@@ -26,8 +25,7 @@ procs = {
     'bvsd': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'bMin', 'bMax'),
 }
 
-# Empty dictionary that will receive the parameters
-# of the procedure to be done
+# Empty dictionary that will receive the parameters of the procedure to be done
 params = {}
 
 def read_card(file_name):
@@ -61,7 +59,7 @@ def read_card(file_name):
 
     # Test for integer
     integers = ['zTarget', 'zProj', 'nProj']
-    for variable in list(set(params) & set(integers)): # Intersection between params and floats
+    for variable in list(set(params) & set(integers)): # Intersection between params and integers
         try:
             params[variable] = int(params[variable])
         except ValueError:

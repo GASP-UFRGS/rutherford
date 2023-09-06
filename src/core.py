@@ -1,7 +1,6 @@
 import numpy as np
 import sys
 import periodictable
-import random
 from card_reader import read_card, _raise_missing_card_error 
 from scipy.constants import epsilon_0, pi, e, c, alpha, hbar, electron_mass
 
