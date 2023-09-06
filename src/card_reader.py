@@ -4,8 +4,9 @@ class CardError(Exception):
     '''Exception raised for errors related to the input card.'''
     pass
 
-def _raise_parameters_error():
-    raise CardError("Parameters missing or in wrong order")
+def _raise_parameters_error(params, procedure):
+    missing_elements = set(procedure) - set(params)
+    raise CardError(f"Parameters missing: {missing_elements}")
 
 def _raise_missing_card_error():
     sys = platform.system()
@@ -19,7 +20,10 @@ def _raise_missing_card_error():
 # Dictionary that contains the necessary parameters
 # of each procedure
 procs = {
-    'thvsb': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'angStart', 'angEnd', 'mott', 'recoil', 'diracProton', 'formFactor', 'rosenbluth', 'impactParameter', 'difCrossSec', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550', 'geigerMarsden')
+    'thvsb': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'angStart', 'angEnd'),
+    'xsec': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'angStart', 'angEnd', 'mott', 'recoil', 'diracProton', 'formFactor', 'rosenbluth', 'CrossSecVariable', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550', 'geigerMarsden'),
+    'beam': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'bMin', 'bMax', 'nProj', 'detectorDistance'),
+    'bvsd': ('kinEn', 'zTarget', 'zProj', 'angUnit', 'bMin', 'bMax'),
 }
 
 # Empty dictionary that will receive the parameters
@@ -36,7 +40,7 @@ def read_card(file_name):
 
         for line in card:
             for parameter in procs[procedure]:
-                if parameter in line:
+                if f'[{parameter}]' in line:
                     try:
                         params[parameter] = float(line.split()[0])
                     except:
@@ -44,25 +48,28 @@ def read_card(file_name):
 
 
     ####### Tests #######
-    if tuple(params) != procs[procedure]:
-        _raise_parameters_error()
+    if set(params) != set(procs[procedure]):
+        _raise_parameters_error(params, procs[procedure])
 
     # Test for float 
-    for variable in ['kinEn', 'angStart', 'angEnd']:
+    floats = ['kinEn', 'angStart', 'angEnd', 'bMin', 'bMax', 'detectorDistance']
+    for variable in list(set(params) & set(floats)): # Intersection between params and floats
         try:
             variable = float(params[variable])
         except ValueError:
             raise ValueError(f"{params[variable]} is not a valid value for {variable}. It must be a float.")
 
     # Test for integer
-    for variable in ['zTarget', 'zProj']:
+    integers = ['zTarget', 'zProj', 'nProj']
+    for variable in list(set(params) & set(integers)): # Intersection between params and floats
         try:
-            variable = int(params[variable])
+            params[variable] = int(params[variable])
         except ValueError:
             raise ValueError(f"{params[variable]} is not a valid value for {variable}. It must be an integer.")
     
     # Test for booleans
-    for variable in ['mott', 'recoil', 'diracProton', 'formFactor', 'rosenbluth', 'impactParameter', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550', 'geigerMarsden']:
+    booleans = ['mott', 'recoil', 'diracProton', 'formFactor', 'rosenbluth', 'impactParameter', 'hoftstadter25', 'hoftstadter125', 'hoftstadter300', 'hoftstadter400', 'hoftstadter550', 'geigerMarsden']
+    for variable in list(set(params) & set(booleans)): # Intersection between params and booleans
         if params[variable] not in ['true', 'false']:
             raise ValueError(f"{params[variable]} is not a valid value for {variable}. It must be 'true' or 'false'.")
         else:
@@ -73,13 +80,17 @@ def read_card(file_name):
                 params[variable] = False
                 
     # Test for valid angle unit
-    if params['angUnit'] not in ['radians', 'degrees']:
-        raise ValueError(f"{params['angUnit']} is not a valid value for angUnit. It must be 'radians' or 'degrees'.")
+    units = ['radians', 'degrees']
+    if 'angUnit' in procs[procedure]:
+        if params['angUnit'] not in ['radians', 'degrees']:
+            raise ValueError(f"{params['angUnit']} is not a valid value for angUnit. It must be 'radians' or 'degrees'.")
 
     # Test for valid choices for difCrossSec
-    if params['difCrossSec'] not in ['theta', 'cos', 'omega', 'none']:
-        raise ValueError(f"{params['difCrossSec']} is not a valid value for difCrossSec. It must be 'theta', 'cos', 'omega', or 'none'.")
+    if 'CrossSecVariable' in params:
+       if params['CrossSecVariable'] not in ['theta', 'cos', 'omega']:
+            raise ValueError(f"{params['CrossSecVariable']} is not a valid value for CrossSecVariable. It must be 'theta', 'cos' or 'omega'.")
 
+    params['proc'] = procedure
     return params
 
 if __name__ == '__main__':
