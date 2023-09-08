@@ -33,22 +33,28 @@ def read_card(file_name):
         for line in card:
             if '[proc]' in line:
                 procedure = line.split()[0]
+                procedure = procedure.split(",")
             elif 'parameters:' in line:
                 break
 
         for line in card:
-            for parameter in procs[procedure]:
-                if f'[{parameter}]' in line:
-                    try:
-                        params[parameter] = float(line.split()[0])
-                    except:
-                        params[parameter] = line.split()[0]
+            for p in procedure:
+                for parameter in procs[p]:
+                    if f'[{parameter}]' in line:
+                        try:
+                            params[parameter] = float(line.split()[0])
+                        except:
+                            params[parameter] = line.split()[0]
 
 
     ####### Tests #######
-    if set(params) != set(procs[procedure]):
-        _raise_parameters_error(params, procs[procedure])
-
+    # Join parameter from all chosen procedures into a single list to test if every single one has been read from input
+    procedure_union = set()
+    for p in procedure:
+        procedure_union.update(procs[p])
+    if set(params) != procedure_union:
+        _raise_parameters_error(params, procedure_union)
+    
     # Test for float 
     floats = ['kinEn', 'angStart', 'angEnd', 'bMin', 'bMax', 'detectorDistance']
     for variable in list(set(params) & set(floats)): # Intersection between params and floats
@@ -79,7 +85,7 @@ def read_card(file_name):
                 
     # Test for valid angle unit
     units = ['radians', 'degrees']
-    if 'angUnit' in procs[procedure]:
+    if 'angUnit' in params:
         if params['angUnit'] not in ['radians', 'degrees']:
             raise ValueError(f"{params['angUnit']} is not a valid value for angUnit. It must be 'radians' or 'degrees'.")
 

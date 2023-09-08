@@ -78,7 +78,7 @@ def plot(output,card_name):
 	for column in data.columns:
 	    column_lists[column] = data[column].tolist()
 
-	if procedure == 'beam':
+	if 'beam' in procedure:
 		theta_in = column_lists['theta']
 		phi = column_lists['phi']
 		position = column_lists['position']
@@ -119,7 +119,7 @@ def plot(output,card_name):
 		print(f'Created {pltName}')
 		
 
-	if procedure == 'thvsb':
+	if 'thvsb' in procedure:
 		# Place values on variables
 		theta_in = column_lists['theta']
 		b_out = column_lists['b_out']
@@ -149,7 +149,7 @@ def plot(output,card_name):
 		plt.savefig(pltName, dpi=300, bbox_inches='tight')
 		print(f'Created {pltName}')
 
-	if procedure == 'bvsd':
+	if 'bvsd' in procedure:
 		b_in = column_lists['b_in']
 		closestDistance = column_lists['closestDistance']
 		
@@ -165,7 +165,7 @@ def plot(output,card_name):
 
 
 	# Differential cross section 
-	if procedure == 'xsec':
+	if 'xsec' in procedure:
 	
 		theta_in = column_lists['theta']
 		

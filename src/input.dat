@@ -1,4 +1,4 @@
-xsec           : [proc] Procedure to be done (xsec, thvsb, beam, bsvd)
+xsec,beam           : [proc] Procedure to be done (xsec, thvsb, beam, bsvd)
 
 Input parameters:
 550e6           : [kinEn] Collision energy (eV)
@@ -7,9 +7,9 @@ Input parameters:
 degrees         : [angUnit] Angle unit (radians or degrees)
 
 beam:
-4e-18           : [bMin] Start of impact parameter interval
-2.5e-17         : [bMax] End of impact parameter interval
-1e5             : [nProj] Ammount of of projectile particles
+9e-22           : [bMin] Start of impact parameter interval (fm)
+2e-18           : [bMax] End of impact parameter interval (fm)
+1e4             : [nProj] Ammount of of projectile particles
 2               : [detectorDistance] Distance from the target to the detector
 
 xsec: 
