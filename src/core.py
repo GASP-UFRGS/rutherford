@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+import csv
 import periodictable
 from card_reader import read_card, _raise_missing_card_error 
 from scipy.constants import epsilon_0, pi, e, c, alpha, hbar, electron_mass
@@ -12,6 +13,7 @@ except IndexError:
 # Constants
 
 parameters = read_card(card_name)
+procedure = parameters.get('proc')
 kinEn = parameters.get('kinEn')
 zTarget = parameters.get('zTarget') 
 zProj = parameters.get('zProj') 
@@ -23,8 +25,11 @@ recoil = parameters.get('recoil')
 diracProton = parameters.get('diracProton')
 formFactor = parameters.get('formFactor')
 rosenbluth = parameters.get('rosenbluth')
-impactParameter = parameters.get('impactParameter') 
-cross_section_variable = parameters.get('difCrossSec')
+cross_section_variable = parameters.get('CrossSecVariable')
+bMin = parameters.get('bMin')
+bMax = parameters.get('bMax')
+nProj = parameters.get('nProj')
+detectorDistance = parameters.get('detectorDistance')
 
 # Outputs Nuclear mass in atomic mass units (u).
 element = periodictable.elements[zTarget]
@@ -48,17 +53,15 @@ D = (zProj*zTarget*alpha/kinEn) # Minimum distance between incident particles an
 
 def impact_parameter(theta, D):
     #Returns impact parameter when given the scattering angle.
-    
     return D/(2*np.tan(theta/2))
-
-
 
 def scattering_angle(bparam, D):
     # Returns scattering angle when given the impact parameter.
-
     return 2*np.arctan(D/(2*bparam))
 
-
+def closest_distance(theta, D):
+    # Returns closest distance that projectile reaches in relation to the target
+    return D/2 * ( 1 + 1/(np.sin(theta/2)) )
 
 def scattering_differential_Ruth(theta, D, cross_section_variable):
     # Returns differential scattering impact when given the scattering angle.
@@ -82,6 +85,8 @@ def scattering_differential_Mott(theta, difCrossSec_Ruth, kinEn, massTarget):
     difCrossSec_Mott = difCrossSec_Ruth * np.cos(theta/2)**2 
 
     return difCrossSec_Mott 
+
+
 
 def scattering_differential_Recoil(theta, difCrossSec_Mott, kinEn, massTarget):
     # Applies Recoil correction factor
@@ -144,74 +149,100 @@ def scattering_differential_Rosenbluth(theta, difCrossSec_Recoil, kinEn, massTar
 
 # Calculations
 
-theta_in = np.linspace(angStart,angEnd,1000)[1:] # Scattering angle input.
+data={}
 
-# Converts theta to radians if necessary
-if angUnit == 'degrees':
-    theta_in = np.radians(theta_in)
+# Calculates 3D outgoing angle and detector position given beam of particles
+if 'beam' in procedure:
+    
+    b_random = np.random.uniform(bMin, bMax, nProj)                  # Generates random b's
+    b_random = b_random/0.1973269802410562                           # Convert from fm to GeV^-1
+    theta_in = np.array([scattering_angle(b, D) for b in b_random])  # Calculates scattering angle
+    position = detectorDistance * np.sin(theta_in)                   # Calculates detector position in relation to target
+    rotation = np.random.uniform(0, 2 * np.pi, nProj)                # Assigns a random rotation for 3D data
+    
+    # Sorts data in relation to theta
+    stacked_data = np.stack((theta_in, position, rotation), axis=-1)
+    sorted_data = stacked_data[np.argsort(stacked_data[:, 0])]
+    theta_in, position, rotation = sorted_data.T
+
+    # Convert array to list and places in data dictionary
+    data['theta'] = np.degrees(theta_in).tolist()
+    data['position'] = position.tolist()
+    data['phi'] = np.degrees(rotation).tolist()
+    
 
 # Calculates Impact parameter
-if impactParameter:
-    b_out = impact_parameter(theta_in, D) 
+if 'thvsb' in procedure:
+    if 'theta' not in data:    
+        theta_in = np.linspace(angStart,angEnd,1000)[1:] # Scattering angle input.
 
-# Calculates diferential coss section
-if cross_section_variable in ['cos', 'theta', 'omega']:
+        # Converts theta to radians if necessary
+        if angUnit == 'degrees':
+            theta_in = np.radians(theta_in)
 
+        data['theta'] = np.degrees(theta_in).tolist()
+        
+    data['b_out'] = impact_parameter(theta_in, D).tolist()
+   
+
+# Calculates diferential cross section
+if 'xsec' in procedure:
+    if 'theta' not in data:
+        theta_in = np.linspace(angStart,angEnd,1000)[1:] # Scattering angle input.
+    
+        # Converts theta to radians if necessary
+        if angUnit == 'degrees':
+            theta_in = np.radians(theta_in)
+
+        data['theta'] = np.degrees(theta_in).tolist()
+    
     difCrossSec_Ruth = scattering_differential_Ruth(theta_in, D, cross_section_variable) #Differential scattering cross section.
-
+    data['difCrossSec_Ruth'] = difCrossSec_Ruth.tolist()
+    
     if mott:
         difCrossSec_Mott = scattering_differential_Mott(theta_in, difCrossSec_Ruth, kinEn, massTarget) # Mott correction cross section.
-
-    if recoil:   
-         difCrossSec_Recoil = scattering_differential_Recoil(theta_in, difCrossSec_Mott, kinEn, massTarget) # Target recoil correction cross section.
+        data['difCrossSec_Mott'] = difCrossSec_Mott.tolist()
+        
+    if recoil:
+        difCrossSec_Recoil = scattering_differential_Recoil(theta_in, difCrossSec_Mott, kinEn, massTarget) # Target recoil correction cross section.
+        data['difCrossSec_Recoil'] = difCrossSec_Recoil.tolist()
 
     if diracProton:
         difCrossSec_diracProton = scattering_differential_Dirac_Proton(theta_in, difCrossSec_Recoil, kinEn, massTarget) # Dirac Proton correction cross section.
+        data['difCrossSec_diracProton'] = difCrossSec_diracProton.tolist()
 
     if formFactor:
         difCrossSec_formFactor = scattering_differential_Form_Factor(theta_in, difCrossSec_Recoil, kinEn, massTarget) # Form Factor correction cross section.
-        
+        data['difCrossSec_formFactor'] = difCrossSec_formFactor.tolist()
+
     if rosenbluth:
         difCrossSec_rosenbluth = scattering_differential_Rosenbluth(theta_in, difCrossSec_Recoil, kinEn, massTarget) # Rosenbluth correction cross section.
+        data['difCrossSec_rosenbluth'] = difCrossSec_rosenbluth.tolist()
+
+
+if 'bvsd' in procedure:
+    b_in = np.linspace(bMin,bMax,1000)[1:] 
+    theta_in = scattering_angle(b_in, D)
+    closestDistance = closest_distance(theta_in, D)
+
+    data['b_in'] = b_in.tolist()
+    data['closestDistance'] = closestDistance.tolist()
 
 # Write to file
 
+max_length = max(len(lst) for lst in data.values())
+
+lines = []
+for i in range(max_length):
+    line = {}
+    for header, values in data.items():
+        line[header] = values[i] if i < len(values) else ''
+    lines.append(line)
+
 file_path = "output.dat"
-
-header = 'theta'
-data = np.degrees(theta_in)
-
-if impactParameter:
-    header += ',b_out'
-    data = np.column_stack((data, b_out))
-
-if cross_section_variable in ['cos', 'theta', 'omega']:
-    header += ',difCrossSec_Ruth'
-    data = np.column_stack((data, difCrossSec_Ruth))
-
-    if mott:
-        header += ',difCrossSec_Mott'
-        data = np.column_stack((data, difCrossSec_Mott))
-
-    if recoil:
-        header += ',difCrossSec_Recoil'
-        data = np.column_stack((data, difCrossSec_Recoil))
-
-    if diracProton:
-        header += ',difCrossSec_diracProton'
-        data = np.column_stack((data, difCrossSec_diracProton))
-        
-    if formFactor:
-        header += ',difCrossSec_formFactor'
-        data = np.column_stack((data, difCrossSec_formFactor))
-        
-    if rosenbluth:
-        header += ',difCrossSec_rosenbluth'
-        data = np.column_stack((data, difCrossSec_rosenbluth))
-        
-
-
-np.savetxt(file_path, data, delimiter=",", header = header, comments="")
-
+with open(file_path, 'w', newline='') as csvfile:
+    csvwriter = csv.DictWriter(csvfile, fieldnames=data.keys())
+    csvwriter.writeheader()
+    csvwriter.writerows(lines)
 
 print("Data has been written to", file_path)

@@ -1,21 +1,26 @@
-thvsb           : [proc] Procedure to be done
+xsec,beam           : [proc] Procedure to be done (xsec, thvsb, beam, bsvd)
 
 Input parameters:
 550e6           : [kinEn] Collision energy (eV)
 79              : [zTarget] Proton number of the target
 0               : [zProj] Proton number of the projectiles
 degrees         : [angUnit] Angle unit (radians or degrees)
+
+beam:
+9e-22           : [bMin] Start of impact parameter interval (fm)
+2e-18           : [bMax] End of impact parameter interval (fm)
+1e4             : [nProj] Ammount of of projectile particles
+2               : [detectorDistance] Distance from the target to the detector
+
+xsec: 
 30              : [angStart] Start of angle interval (chosen unit)
 160             : [angEnd] End of angle interval (chosen unit)
+omega           : [CrossSecVariable] Differential Cross Section in relation to either theta, cos(theta) or the solid angle (theta, cos, omega)
 true            : [mott] Compute mott correction
 true            : [recoil] Compute target recoil correction
 true            : [diracProton] Compute Dirac Proton correction
 true            : [formFactor] Compute Form Factor  correction
 true            : [rosenbluth] Compute Rosenbluth  correction
-
-Calculate:
-true            : [impactParameter] Impact Parameter b
-omega           : [difCrossSec] Differential Cross Section in relation to either theta, cos(theta) or the solid angle (theta, cos, omega or none)
 
 Compare with:
 Data from Fregeau, J H, and Hofstadter, 1953, https://doi.org/10.1103/PhysRev.99.1503
